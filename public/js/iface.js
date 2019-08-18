@@ -38,7 +38,8 @@ I.elements = {
     call_button: 'callButton',
     hangup_button: 'hangupButton',
     cancel_button: 'cancel-btn',
-    chat_preload: 'chat-preload'
+    chat_preload: 'chat-preload',
+    screenshare_button: 'screenshareButton'
 };
 
 /**
@@ -168,7 +169,8 @@ I.setInterfaceHandlers = function(){
         send_files_btn: {event:'click', handler: I.sendFiles},
         call_button: {event: 'click', handler: I.app.wrtc.call},
         hangup_button: {event: 'click', handler: I.app.wrtc.hangup},
-        cancel_button: {event: 'click', handler: I.clearSelectedFiles}
+        cancel_button: {event: 'click', handler: I.clearSelectedFiles},
+        screenshare_button: {event: 'click', handler: I.app.wrtc.screenShare}
     };
     for (var el in handlers){
         if (I[el] != null && I[el] != undefined){
@@ -419,6 +421,7 @@ I.chat_enable = function(status){
         I.input.disabled = true;
     }
 };
+
 
 
 

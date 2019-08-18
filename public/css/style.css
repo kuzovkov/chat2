@@ -69,6 +69,7 @@ button {text-align: center;}
 .call-buttons{position: absolute; display: inline-block; left: 50%; width: 100%; margin-left: -50%; bottom: 50px;z-index: 9999;}
 #callButton { display: inline-block; font-size: 1em; border-radius: 1em; }
 #hangupButton { display: none; font-size: 1em; border-radius: 1em; }
+#screenshareButton { display: none; font-size: 1em; border-radius: 1em; }
 .video-wrap {  width: 90%;  height: 100%;  margin: 10px;  position:relative;  padding: 0 10px 0 10px; text-align: center;}
 
 /*panel*/

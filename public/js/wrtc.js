@@ -11,6 +11,7 @@ WRTC.init = function(app){
     WRTC.app = app;
     WRTC.pc = null; // PeerConnection
     WRTC.localStream = null;
+    WRTC.screenStream = null;
     WRTC.online = false;
     WRTC.hang_up = true; /*повешена ли трубка*/
     WRTC.mediaOptions = { audio: true, video: true };
@@ -169,6 +170,7 @@ WRTC.gotRemoteStream = function(event){
     WRTC.online = true;
     WRTC.app.au.stopSound();
     WRTC.setHangUp(true);
+    document.getElementById("screenshareButton").style.display = 'inline-block';
 };
 
 /**
@@ -192,6 +194,7 @@ WRTC.hangup = function(){
     WRTC.sendMessage({type:'hangup'});
     WRTC.disconnect();
     WRTC.setHangUp(false);
+    document.getElementById("screenshareButton").style.display = 'none';
 };
 
 /**
@@ -231,10 +234,11 @@ WRTC.disconnect = function(){
         WRTC.localStream.getAudioTracks().forEach(function (track) {
             track.stop();
         });
-        WRTC.localStream == null;
+        WRTC.localStream = null;
     }
     document.getElementById("localVideo").src = '';
     document.getElementById("remoteVideo").src = '';
+    document.getElementById("screenshareButton").style.display = 'none';
     WRTC.app.au.stopSound();
     WRTC.setSelectedUser(null);
 };
@@ -295,6 +299,8 @@ WRTC.gotMessage = function(data){
         WRTC.app.au.stopSound();
         WRTC.setHangUp(false);
         dialogMessage('Video chat', 'Call was rejected');
+    }else if (WRTC.pc != null && message.type === 'renegotiate'){
+        WRTC.createAnswer();
     }
 };
 
@@ -312,6 +318,113 @@ WRTC.setSelectedUser = function(user){
             window.localStorage.removeItem('videochat_user');
         }
 };
+
+/**
+ * Обработчик кнопки расшаривания экрана
+ */
+WRTC.screenShare = function(){
+    if(navigator.getDisplayMedia || navigator.mediaDevices.getDisplayMedia) {
+        if(navigator.mediaDevices.getDisplayMedia) {
+            navigator.mediaDevices.getDisplayMedia({video: true}).then(function (stream) {
+                WRTC.onGettingScreenSteam(stream);
+            }, WRTC.getDisplayMediaError).catch(WRTC.getDisplayMediaError);
+        } else if(navigator.getDisplayMedia) {
+            navigator.getDisplayMedia({video: true}).then(function (stream) {
+                WRTC.onGettingScreenSteam(stream);
+            }, getDisplayMediaError).catch(getDisplayMediaError);
+        }
+    } else {
+        if (DetectRTC.browser.name === 'Chrome') {
+            if (DetectRTC.browser.version == 71) {
+                dialogMessage('Please enable "Experimental WebPlatform" flag via chrome://flags.');
+            } else if (DetectRTC.browser.version < 71) {
+                dialogMessage('Please upgrade your Chrome browser.');
+            } else {
+                dialogMessage('Please make sure that you are not using Chrome on iOS.');
+            }
+        }
+
+        if (DetectRTC.browser.name === 'Firefox') {
+            dialogMessage('Please upgrade your Firefox browser.');
+        }
+
+        if (DetectRTC.browser.name === 'Edge') {
+            dialogMessage('Please upgrade your Edge browser.');
+        }
+
+        if (DetectRTC.browser.name === 'Safari') {
+            dialogMessage('Safari does NOT supports getDisplayMedia API yet.');
+        }
+    }
+};
+
+/**
+ * Обработка ошибок получения медия потока с экрана
+ * @param error
+ */
+WRTC.getDisplayMediaError = function(error){
+    if (location.protocol === 'http:') {
+        dialogMessage('Please test this WebRTC experiment on HTTPS.');
+    } else {
+        console.log(error);
+        dialogMessage(error.toString());
+    }
+};
+
+/**
+ * Обработка получения потока с экрана
+ * @param stream
+ */
+WRTC.onGettingScreenSteam = function(stream){
+    WRTC.screenStream = stream;
+    WRTC.addStreamStopListener(stream, WRTC.onScreenShareEnded);
+    document.getElementById("screenshareButton").style.display = 'none';
+    WRTC.pc.addStream(WRTC.screenStream);
+    WRTC.pc.removeStream(WRTC.localStream);
+    WRTC.createOffer();
+    WRTC.sendMessage({type:'renegotiate'})
+
+};
+
+/**
+ * Установка обработчика прекращения расшаривания экрана
+ * @param stream
+ * @param callback
+ */
+WRTC.addStreamStopListener = function (stream, callback) {
+    stream.addEventListener('ended', function() {
+        callback();
+        callback = function() {};
+    }, false);
+    stream.addEventListener('inactive', function() {
+        callback();
+        callback = function() {};
+    }, false);
+    stream.getTracks().forEach(function(track) {
+        track.addEventListener('ended', function() {
+            callback();
+            callback = function() {};
+        }, false);
+        track.addEventListener('inactive', function() {
+            callback();
+            callback = function() {};
+        }, false);
+    });
+};
+
+/**
+ * Обработка прекращения расшаривания экрана
+ */
+WRTC.onScreenShareEnded = function(){
+    console.log('Screen share stopped');
+    document.getElementById("screenshareButton").style.display = 'inline-block';
+    WRTC.pc.removeStream(WRTC.screenStream);
+    WRTC.pc.addStream(WRTC.localStream);
+    WRTC.screenStream = null;
+    WRTC.createOffer();
+    WRTC.sendMessage({type:'renegotiate'})
+};
+
 
 
 
