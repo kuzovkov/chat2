@@ -20,7 +20,7 @@ F.init = function(app){
         F.FILE_API = false;
         console.log('File API is not supported');
     }
-}
+};
 
 /**
  * обработчик выбора файлов

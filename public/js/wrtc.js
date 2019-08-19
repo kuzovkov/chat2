@@ -72,7 +72,7 @@ WRTC.gotStreamCaller = function(stream) {
     WRTC.localStream = stream;
     console.log(Date.now(), 'gotStream:', stream);
     WRTC.pc = new PeerConnection(WRTC.pc_config);
-    WRTC.pc.addStream(stream);
+    WRTC.addStreamToRTCPeerConnection(stream);
     WRTC.pc.onicecandidate = WRTC.gotIceCandidate;
     WRTC.pc.onaddstream = WRTC.gotRemoteStream;
 };
@@ -83,6 +83,7 @@ WRTC.gotStreamCaller = function(stream) {
  * @param stream медиапоток
  */
 WRTC.attachStream = function(el, stream) {
+    console.log('attachStream', stream);
     var myURL = window.URL || window.webkitURL;
     if (!myURL) {
         el.src = stream;
@@ -100,9 +101,10 @@ WRTC.gotStreamCalle = function(stream) {
     WRTC.attachStream(document.getElementById("localVideo"), stream);
     WRTC.localStream = stream;
     WRTC.pc = new PeerConnection(WRTC.pc_config);
-    WRTC.pc.addStream(stream);
+    WRTC.addStreamToRTCPeerConnection(stream);
     WRTC.pc.onicecandidate = WRTC.gotIceCandidate;
     WRTC.pc.onaddstream = WRTC.gotRemoteStream;
+    WRTC.pc.ontrack = WRTC.gotRemoteTracks;
     WRTC.sendMessage({type:'offer_ready'});
 };
 
@@ -166,7 +168,24 @@ WRTC.gotIceCandidate = function(event){
  */
 WRTC.gotRemoteStream = function(event){
     console.log(Date.now(), 'gotRemoteStream: ', event.stream);
+    console.log(Date.now(), 'gotRemoteStream(audio tracks): ', event.stream.getAudioTracks());
     WRTC.attachStream(document.getElementById("remoteVideo"), event.stream);
+    WRTC.online = true;
+    WRTC.app.au.stopSound();
+    WRTC.setHangUp(true);
+    document.getElementById("screenshareButton").style.display = 'inline-block';
+};
+
+/**
+ * обработчик получения объектом RTCPeerConnection
+ * удаленного трека медиапотока
+ * На событие "track", вместо обработчика устаревшего события "addstream"
+ * @param event объект события
+ */
+WRTC.gotRemoteTracks = function(event){
+    console.log(Date.now(), 'gotRemoteStream: ', event.streams);
+    console.log(Date.now(), 'gotRemoteStream(audio tracks): ', event.streams[0].getAudioTracks());
+    WRTC.attachStream(document.getElementById("remoteVideo"), event.streams[0]);
     WRTC.online = true;
     WRTC.app.au.stopSound();
     WRTC.setHangUp(true);
@@ -379,11 +398,16 @@ WRTC.onGettingScreenSteam = function(stream){
     WRTC.screenStream = stream;
     WRTC.addStreamStopListener(stream, WRTC.onScreenShareEnded);
     document.getElementById("screenshareButton").style.display = 'none';
-    WRTC.pc.addStream(WRTC.screenStream);
-    WRTC.pc.removeStream(WRTC.localStream);
+    WRTC.removeStreamFromRTCPeerConnection(WRTC.localStream);
+    var audiotracks = WRTC.localStream.getAudioTracks();
+    console.log('audio tracks', audiotracks);
+    if (audiotracks.length > 0){
+        console.log('add audio track', audiotracks[0]);
+        WRTC.screenStream.addTrack(audiotracks[0]);
+    }
+    WRTC.addStreamToRTCPeerConnection(WRTC.screenStream);
     WRTC.createOffer();
     WRTC.sendMessage({type:'renegotiate'})
-
 };
 
 /**
@@ -418,11 +442,45 @@ WRTC.addStreamStopListener = function (stream, callback) {
 WRTC.onScreenShareEnded = function(){
     console.log('Screen share stopped');
     document.getElementById("screenshareButton").style.display = 'inline-block';
-    WRTC.pc.removeStream(WRTC.screenStream);
-    WRTC.pc.addStream(WRTC.localStream);
+    WRTC.removeStreamFromRTCPeerConnection(WRTC.screenStream);
+    WRTC.addStreamToRTCPeerConnection(WRTC.localStream);
     WRTC.screenStream = null;
     WRTC.createOffer();
     WRTC.sendMessage({type:'renegotiate'})
+};
+
+/**
+ * Wrap over ToRTCPeerConnection.addStream to avoid
+ * deprecated issues
+ * @param stream
+ */
+WRTC.addStreamToRTCPeerConnection = function(stream){
+    try{
+        WRTC.pc.addStream(stream);
+    }catch (e){
+        stream.getTracks().forEach(function(track) {
+            WRTC.pc.addTrack(track, stream);
+        });
+    }
+};
+
+/**
+ * Wrap over ToRTCPeerConnection.removeStream to avoid
+ * deprecated issues
+ * @param stream
+ */
+WRTC.removeStreamFromRTCPeerConnection = function(stream){
+    try{
+        WRTC.pc.removeStream(stream);
+    }catch (e){
+        WRTC.pc.getSenders().forEach(function(sender){
+            stream.getTracks().forEach(function(track){
+                if(track == sender.track){
+                    WRTC.pc.removeTrack(sender);
+                }
+            })
+        });
+    }
 };
 
 
