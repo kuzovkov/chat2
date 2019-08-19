@@ -39,7 +39,11 @@ I.elements = {
     hangup_button: 'hangupButton',
     cancel_button: 'cancel-btn',
     chat_preload: 'chat-preload',
-    screenshare_button: 'screenshareButton'
+    screenshare_button: 'screenshareButton',
+    video_off_button: 'videoOff',
+    video_on_button: 'videoOn',
+    audio_off_button: 'audioOff',
+    audio_on_button: 'audioOn'
 };
 
 /**
@@ -170,7 +174,11 @@ I.setInterfaceHandlers = function(){
         call_button: {event: 'click', handler: I.app.wrtc.call},
         hangup_button: {event: 'click', handler: I.app.wrtc.hangup},
         cancel_button: {event: 'click', handler: I.clearSelectedFiles},
-        screenshare_button: {event: 'click', handler: I.app.wrtc.screenShare}
+        screenshare_button: {event: 'click', handler: I.app.wrtc.screenShare},
+        video_off_button: {event: 'click', handler: I.app.wrtc.videoOff},
+        video_on_button: {event: 'click', handler: I.app.wrtc.videoOn},
+        audio_off_button: {event: 'click', handler: I.app.wrtc.audioOff},
+        audio_on_button: {event: 'click', handler: I.app.wrtc.audioOn}
     };
     for (var el in handlers){
         if (I[el] != null && I[el] != undefined){

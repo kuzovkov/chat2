@@ -128,6 +128,7 @@ WRTC.createOffer = function() {
  */
 WRTC.createAnswer = function() {
     console.log(Date.now(), 'createAnswer');
+    console.log(Date.now(), 'signalingState', WRTC.pc.signalingState);
     WRTC.pc.createAnswer(
         WRTC.gotLocalDescription,
         function(error) { console.log(error) },
@@ -174,6 +175,8 @@ WRTC.gotRemoteStream = function(event){
     WRTC.app.au.stopSound();
     WRTC.setHangUp(true);
     document.getElementById("screenshareButton").style.display = 'inline-block';
+    document.getElementById("videoOff").style.display = 'inline-block';
+    document.getElementById("audioOff").style.display = 'inline-block';
 };
 
 /**
@@ -190,6 +193,8 @@ WRTC.gotRemoteTracks = function(event){
     WRTC.app.au.stopSound();
     WRTC.setHangUp(true);
     document.getElementById("screenshareButton").style.display = 'inline-block';
+    document.getElementById("videoOff").style.display = 'inline-block';
+    document.getElementById("audioOff").style.display = 'inline-block';
 };
 
 /**
@@ -214,6 +219,8 @@ WRTC.hangup = function(){
     WRTC.disconnect();
     WRTC.setHangUp(false);
     document.getElementById("screenshareButton").style.display = 'none';
+    document.getElementById("videoOff").style.display = 'none';
+    document.getElementById("videoOn").style.display = 'none';
 };
 
 /**
@@ -258,6 +265,10 @@ WRTC.disconnect = function(){
     document.getElementById("localVideo").src = '';
     document.getElementById("remoteVideo").src = '';
     document.getElementById("screenshareButton").style.display = 'none';
+    document.getElementById("videoOff").style.display = 'none';
+    document.getElementById("videoOn").style.display = 'none';
+    document.getElementById("audioOff").style.display = 'none';
+    document.getElementById("audioOn").style.display = 'none';
     WRTC.app.au.stopSound();
     WRTC.setSelectedUser(null);
 };
@@ -318,8 +329,6 @@ WRTC.gotMessage = function(data){
         WRTC.app.au.stopSound();
         WRTC.setHangUp(false);
         dialogMessage('Video chat', 'Call was rejected');
-    }else if (WRTC.pc != null && message.type === 'renegotiate'){
-        WRTC.createAnswer();
     }
 };
 
@@ -407,7 +416,6 @@ WRTC.onGettingScreenSteam = function(stream){
     }
     WRTC.addStreamToRTCPeerConnection(WRTC.screenStream);
     WRTC.createOffer();
-    WRTC.sendMessage({type:'renegotiate'})
 };
 
 /**
@@ -446,7 +454,6 @@ WRTC.onScreenShareEnded = function(){
     WRTC.addStreamToRTCPeerConnection(WRTC.localStream);
     WRTC.screenStream = null;
     WRTC.createOffer();
-    WRTC.sendMessage({type:'renegotiate'})
 };
 
 /**
@@ -481,6 +488,54 @@ WRTC.removeStreamFromRTCPeerConnection = function(stream){
             })
         });
     }
+};
+
+/**
+ * Обработчик кнопки выключения видео
+ */
+WRTC.videoOff = function(){
+    WRTC.localStream.getVideoTracks().forEach(function(track){
+       track.enabled = false;
+    });
+    document.getElementById("videoOn").style.display = 'inline-block';
+    document.getElementById("videoOff").style.display = 'none';
+    WRTC.createOffer();
+};
+
+/**
+ * Обработчик кнопки включения видео
+ */
+WRTC.videoOn = function(){
+    WRTC.localStream.getVideoTracks().forEach(function(track){
+        track.enabled = true;
+    });
+    document.getElementById("videoOff").style.display = 'inline-block';
+    document.getElementById("videoOn").style.display = 'none';
+    WRTC.createOffer();
+};
+
+/**
+ * Обработчик кнопки выключения звука
+ */
+WRTC.audioOff = function(){
+    WRTC.localStream.getAudioTracks().forEach(function(track){
+        track.enabled = false;
+    });
+    document.getElementById("audioOn").style.display = 'inline-block';
+    document.getElementById("audioOff").style.display = 'none';
+    WRTC.createOffer();
+};
+
+/**
+ * Обработчик кнопки включения звука
+ */
+WRTC.audioOn = function(){
+    WRTC.localStream.getAudioTracks().forEach(function(track){
+        track.enabled = true;
+    });
+    document.getElementById("audioOff").style.display = 'inline-block';
+    document.getElementById("audioOn").style.display = 'none';
+    WRTC.createOffer();
 };
 
 
