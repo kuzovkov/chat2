@@ -109,10 +109,10 @@ Chat.getSocket = function(nicname){
  */
 Chat.addMessage = function(from, to, message){
     var timestamp = (new Date()).getTime();
-    var message = {created: timestamp, from:from,to:to,message:message};
+    message = {created: timestamp, from:from,to:to,message:message};
     Chat.messages.push(message);
     if (Chat.messages.length > Chat.MAX_COUNT_MESS){
-        Chat.splice(0, Chat.messages.length - Chat.MAX_COUNT_MESS)
+        Chat.messages.splice(0, Chat.messages.length - Chat.MAX_COUNT_MESS)
     }
     return message;
 };

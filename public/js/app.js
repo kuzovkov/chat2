@@ -60,7 +60,17 @@ A.disconnect = function(){
  */
 A.sendUserMessage = function(message){
     if (A.selected_user == null) return;
-    A.socket.send('user_message', {message: message, to:A.selected_user});
+    /**если сообщение пользователю с которым на созвоне посылаем сообщение через p2p иначе через сервер**/
+    if (A.wrtc.chat_datachannel != null && A.selected_user == A.wrtc.selected_user){
+        var timestamp = (new Date()).getTime();
+        var messageObject = {created: timestamp, from: WRTC.app.nicname, to: WRTC.selected_user, message:message};
+        A.iface.addMessage(messageObject);
+        A.wrtc.chat_datachannel.send(message);
+        console.log('send message p2p');
+    }else{
+        A.socket.send('user_message', {message: message, to:A.selected_user});
+        console.log('send message across server');
+    }
 };
 
 /**
