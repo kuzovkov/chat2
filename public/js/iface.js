@@ -141,6 +141,24 @@ I.refreshFilesLinks = function(data){
 };
 
 /**
+ * добавление в список загруженных файлов при загрузке их p2p
+ * @param anchor
+ */
+I.appendIncomingFile = function(anchor){
+    var ul = document.querySelector('#incoming-files');
+    var img = document.createElement('img');
+    img.src = "/img/cancel-circle.svg";
+    img.className = "icon-small delete-file";
+    img.title = "Double click to delete";
+    var li = document.createElement('li');
+    li.id = UUID4();
+    li.appendChild(img);
+    li.appendChild(anchor);
+    li.ondblclick = function(e){ ul.removeChild(document.getElementById(this.id));};
+    ul.appendChild(li);
+};
+
+/**
  * очистка выбранных файлов
  */
 I.clearSelectedFiles = function(){
@@ -436,6 +454,13 @@ I.chat_enable = function(status){
     }else{
         I.input.disabled = true;
     }
+};
+
+UUID4 = function () {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 };
 
 

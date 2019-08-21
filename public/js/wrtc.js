@@ -14,6 +14,7 @@ WRTC.init = function(app){
     WRTC.screenStream = null;
     WRTC.online = false;
     WRTC.chat_datachannel = null; /*RTCDataChannel для чата*/
+    WRTC.file_datachannel = null; /*RTCDataChannel для файлов*/
     WRTC.hang_up = true; /*повешена ли трубка*/
     WRTC.mediaOptions = { audio: true, video: true };
     WRTC.selected_user = null; /*абонент для видеочата*/
@@ -77,8 +78,11 @@ WRTC.gotStreamCaller = function(stream) {
     WRTC.pc.onicecandidate = WRTC.gotIceCandidate;
     WRTC.pc.onaddstream = WRTC.gotRemoteStream;
     WRTC.chat_datachannel = WRTC.pc.createDataChannel("chat", {negotiated: true, id: 0});
+    WRTC.file_datachannel = WRTC.pc.createDataChannel("file", {negotiated: true, id: 1});
     WRTC.chat_datachannel.onopen = WRTC.chatDataChannelOnOpen;
     WRTC.chat_datachannel.onmessage = WRTC.chatDataChannelOnMessage;
+    WRTC.file_datachannel.onopen = WRTC.fileDataChannelOnOpen;
+    WRTC.file_datachannel.onmessage = WRTC.fileDataChannelOnMessage;
 };
 
 /**
@@ -111,8 +115,11 @@ WRTC.gotStreamCalle = function(stream) {
     WRTC.pc.ontrack = WRTC.gotRemoteTracks;
     WRTC.sendMessage({type:'offer_ready'});
     WRTC.chat_datachannel = WRTC.pc.createDataChannel("chat", {negotiated: true, id: 0});
+    WRTC.file_datachannel = WRTC.pc.createDataChannel("file", {negotiated: true, id: 1});
     WRTC.chat_datachannel.onopen = WRTC.chatDataChannelOnOpen;
     WRTC.chat_datachannel.onmessage = WRTC.chatDataChannelOnMessage;
+    WRTC.file_datachannel.onopen = WRTC.fileDataChannelOnOpen;
+    WRTC.file_datachannel.onmessage = WRTC.fileDataChannelOnMessage;
 };
 
 
@@ -261,6 +268,10 @@ WRTC.disconnect = function(){
     if(WRTC.chat_datachannel != null){
         WRTC.chat_datachannel.close();
         WRTC.chat_datachannel = null;
+    }
+    if(WRTC.file_datachannel != null){
+        WRTC.file_datachannel.close();
+        WRTC.file_datachannel = null;
     }
     if (WRTC.localStream != null){
 
@@ -566,6 +577,28 @@ WRTC.chatDataChannelOnMessage = function(event) {
     var message = {created: timestamp, from:WRTC.selected_user, to: WRTC.app.nicname, message:event.data};
     console.log(message);
     WRTC.app.iface.addMessage(message);
+};
+
+/**
+ * Обработчик создания file datachannel
+ * @param event
+ */
+WRTC.fileDataChannelOnOpen = function(event) {
+    console.log('file datachannel open');
+};
+
+/**
+ * Обработчик приема данных через file datachannel
+ * @param event
+ */
+WRTC.fileDataChannelOnMessage = function(event) {
+    console.log(event.data);
+    var data = JSON.parse(event.data);
+    if( data.data === null && data.fileName !== undefined) {
+        WRTC.app.filesp2p.startDownload(data);
+    } else {
+        WRTC.app.filesp2p.progressDownload(data);
+    }
 };
 
 

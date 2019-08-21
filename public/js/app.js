@@ -11,6 +11,8 @@ A.init = function(){
     A.socket.init(A);
     A.files = F;
     A.files.init(A);
+    A.filesp2p = Fp2p;
+    A.filesp2p.init(A);
     A.wrtc = WRTC;
     A.wrtc.init(A);
     A.setEventHandlers();
@@ -157,7 +159,14 @@ A.lastMessages = function(data){
  * @param fdata
  */
 A.sendFile = function(f, progressbar){
-    F.sendFile(f, '/upload', A.selected_user, A.nicname, progressbar);
+    if (A.wrtc.file_datachannel != null && A.selected_user == A.wrtc.selected_user){
+        console.log('send file p2p');
+        Fp2p.sendFile(f, A.wrtc.file_datachannel);
+    }else{
+        console.log('send file to server');
+        F.sendFile(f, '/upload', A.selected_user, A.nicname, progressbar);
+    }
+
 };
 
 /**
