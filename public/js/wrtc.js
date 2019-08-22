@@ -77,8 +77,8 @@ WRTC.gotStreamCaller = function(stream) {
     WRTC.addStreamToRTCPeerConnection(stream);
     WRTC.pc.onicecandidate = WRTC.gotIceCandidate;
     WRTC.pc.onaddstream = WRTC.gotRemoteStream;
-    WRTC.chat_datachannel = WRTC.pc.createDataChannel("chat", {negotiated: true, id: 0});
-    WRTC.file_datachannel = WRTC.pc.createDataChannel("file", {negotiated: true, id: 1});
+    WRTC.chat_datachannel = WRTC.pc.createDataChannel("chat", {negotiated: true, id: 0, ordered: true});
+    WRTC.file_datachannel = WRTC.pc.createDataChannel("file", {negotiated: true, id: 1, ordered: true});
     WRTC.chat_datachannel.onopen = WRTC.chatDataChannelOnOpen;
     WRTC.chat_datachannel.onmessage = WRTC.chatDataChannelOnMessage;
     WRTC.file_datachannel.onopen = WRTC.fileDataChannelOnOpen;
@@ -114,8 +114,8 @@ WRTC.gotStreamCalle = function(stream) {
     WRTC.pc.onaddstream = WRTC.gotRemoteStream;
     WRTC.pc.ontrack = WRTC.gotRemoteTracks;
     WRTC.sendMessage({type:'offer_ready'});
-    WRTC.chat_datachannel = WRTC.pc.createDataChannel("chat", {negotiated: true, id: 0});
-    WRTC.file_datachannel = WRTC.pc.createDataChannel("file", {negotiated: true, id: 1});
+    WRTC.chat_datachannel = WRTC.pc.createDataChannel("chat", {negotiated: true, id: 0, ordered: true});
+    WRTC.file_datachannel = WRTC.pc.createDataChannel("file", {negotiated: true, id: 1, ordered: true});
     WRTC.chat_datachannel.onopen = WRTC.chatDataChannelOnOpen;
     WRTC.chat_datachannel.onmessage = WRTC.chatDataChannelOnMessage;
     WRTC.file_datachannel.onopen = WRTC.fileDataChannelOnOpen;
@@ -592,12 +592,10 @@ WRTC.fileDataChannelOnOpen = function(event) {
  * @param event
  */
 WRTC.fileDataChannelOnMessage = function(event) {
-    console.log(event.data);
-    var data = JSON.parse(event.data);
-    if( data.data === null && data.fileName !== undefined) {
-        WRTC.app.filesp2p.startDownload(data);
+    if( typeof event.data === 'string') {
+        WRTC.app.filesp2p.startDownload(event.data);
     } else {
-        WRTC.app.filesp2p.progressDownload(data);
+        WRTC.app.filesp2p.progressDownload(event.data);
     }
 };
 
