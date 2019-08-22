@@ -132,6 +132,7 @@ F.sendFile = function(f, url, to, from, progressbar){
                     if (percentComplete === 100) {
                         progressbar.innerText = 'Done';
                         progressbar.textContent = 'Done';
+                        progressbar.style.width = '100%';
                     }
                 }
 

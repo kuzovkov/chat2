@@ -30,9 +30,10 @@ Fp2p.getFileObject = function(file, p2pConnection){
  * @param file
  * @param p2pConnection
  */
-Fp2p.sendFile = function(file, p2pConnection){
+Fp2p.sendFile = function(file, p2pConnection, progressbar){
     var fileObj = Fp2p.getFileObject(file, p2pConnection);
     fileObj.fileReader.onload = function(){ Fp2p.sendNextChunk(fileObj)};
+    fileObj.progressbar = progressbar;
     Fp2p.startUpload(fileObj);
 };
 
@@ -83,6 +84,8 @@ Fp2p.progressDownload = function(data) {
  * @param uuid
  */
 Fp2p.endDownload = function (uuid) {
+    if (Fp2p.incomingFiles[uuid] === undefined)
+        return;
     if (Fp2p.incomingFiles[uuid].bytesReceived < Fp2p.incomingFiles[uuid].incomingFileInfo.fileSize)
         return;
     Fp2p.incomingFiles[uuid].downloadInProgress = false;
@@ -142,7 +145,15 @@ Fp2p.sendNextChunk = function (fileObj) {
     fileObj.currentChunk++;
     if( Fp2p.BYTES_PER_CHUNK * fileObj.currentChunk < fileObj.file.size ) {
         Fp2p.readNextChunk(fileObj);
+        var percentComplete = Fp2p.BYTES_PER_CHUNK * fileObj.currentChunk / fileObj.file.size;
+        percentComplete = parseInt(percentComplete * 100);
+        fileObj.progressbar.innerText = percentComplete + '%';
+        fileObj.progressbar.textContent = percentComplete + '%';
+        fileObj.progressbar.style.width = percentComplete + '%';
     }else{
+        fileObj.progressbar.innerText = 'Done';
+        fileObj.progressbar.textContent = 'Done';
+        fileObj.progressbar.style.width = '100%';
         fileObj.p2pConnection.send(JSON.stringify({
             uuid: fileObj.uuid,
             type: 'end'
