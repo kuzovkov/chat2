@@ -62,3 +62,4 @@ services:
       - ./docker/coturn/turnserver.conf:/etc/coturn/turnserver.conf
       - ./docker/coturn/db:/var/db/turndb:ro
       - ./docker/certbot/conf:/etc/letsencrypt
+      - .docker/coturn/coturn:/etc/default/coturn
