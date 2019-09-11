@@ -82,7 +82,7 @@ I.sendFiles = function(){
         return;
     }
     I.hideElem(I.send_files_btn);
-    I.hideElem(I.cancel_button);
+    //I.hideElem(I.cancel_button);
     I.hideElem(I.files_input);
     for (var i = 0,f; f = F.choosen_files[i]; i++){
         var progress = document.createElement('div');
@@ -92,6 +92,7 @@ I.sendFiles = function(){
         progress.appendChild(progressbar);
         var li = document.getElementById('fl-' + i);
         li.appendChild(progress);
+        progressbar.className = 'progress-bar';
         I.app.sendFile(f, progressbar);
     }
 };
@@ -103,7 +104,7 @@ I.sendFiles = function(){
  */
 I.fillFilesList = function(list) {
     I.showElem(I.send_files_btn);
-    I.showElem(I.cancel_button);
+    //I.showElem(I.cancel_button);
     I.showElem(I.files_input);
     if (list.length == 0){
         if (I.files_list != null) I.files_list.innerHTML = '';
@@ -165,6 +166,7 @@ I.clearSelectedFiles = function(){
     I.files_input.value = null;
     F.choosen_files = [];
     I.files_list.innerHTML = '';
+    I.fillFilesList(F.choosen_files);
 };
 
 /**
