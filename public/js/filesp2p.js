@@ -1,6 +1,7 @@
 Fp2p = {};
 
 Fp2p.BYTES_PER_CHUNK = 12*1024;
+Fp2p.BUFFERED_AMOUNT_LIMIT = 10000000;
 Fp2p.app = null;
 Fp2p.p2pConnection = null;
 Fp2p.incomingFiles = {};
@@ -8,6 +9,10 @@ Fp2p.incomingFiles = {};
 Fp2p.init = function (app) {
     Fp2p.app = app;
 };
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /**
  * get file object for each sended file
@@ -125,10 +130,16 @@ Fp2p.startUpload = function(fileObj){
  * read next chink of a file
  * @param fileObj
  */
-Fp2p.readNextChunk = function (fileObj){
+Fp2p.readNextChunk = async function (fileObj){
     var start = Fp2p.BYTES_PER_CHUNK * fileObj.currentChunk;
     var end = Math.min( fileObj.file.size, start + Fp2p.BYTES_PER_CHUNK );
-    fileObj.fileReader.readAsArrayBuffer( fileObj.file.slice( start, end ) );
+    if (fileObj.p2pConnection.bufferedAmount < Fp2p.BUFFERED_AMOUNT_LIMIT){
+        fileObj.fileReader.readAsArrayBuffer( fileObj.file.slice( start, end ) );
+    }else{
+        await sleep(50);
+        Fp2p.readNextChunk(fileObj);
+    }
+
 };
 
 /**
@@ -141,7 +152,6 @@ Fp2p.sendNextChunk = function (fileObj) {
     var dataarray = new Int8Array(filearray.length+ uuidarray.length);
     dataarray.set(uuidarray);
     dataarray.set(filearray, uuidarray.length);
-    console.log(fileObj.p2pConnection.bufferedAmount);
     fileObj.p2pConnection.send(dataarray.buffer);
     fileObj.currentChunk++;
     if( Fp2p.BYTES_PER_CHUNK * fileObj.currentChunk < fileObj.file.size ) {
