@@ -141,6 +141,7 @@ Fp2p.sendNextChunk = function (fileObj) {
     var dataarray = new Int8Array(filearray.length+ uuidarray.length);
     dataarray.set(uuidarray);
     dataarray.set(filearray, uuidarray.length);
+    console.log(fileObj.p2pConnection.bufferedAmount);
     fileObj.p2pConnection.send(dataarray.buffer);
     fileObj.currentChunk++;
     if( Fp2p.BYTES_PER_CHUNK * fileObj.currentChunk < fileObj.file.size ) {
