@@ -136,7 +136,7 @@ Fp2p.readNextChunk = async function (fileObj){
     if (fileObj.p2pConnection.bufferedAmount < Fp2p.BUFFERED_AMOUNT_LIMIT){
         fileObj.fileReader.readAsArrayBuffer( fileObj.file.slice( start, end ) );
     }else{
-        await sleep(50);
+        await sleep(30);
         Fp2p.readNextChunk(fileObj);
     }
 
