@@ -20,6 +20,7 @@ global.io = io;
 var controller = require('./modules/controller');
 var Handler = require('./modules/handler');
 var cons = require('consolidate');
+const RTCMultiConnectionServer = require('rtcmulticonnection-server');
 
 
 server.listen(port,function(){
@@ -64,6 +65,9 @@ app.get('/file/:secret', controller.download_file);
 app.get('/file-del/:secret', controller.remove_file);
 app.post('/upload', controller.upload_file);
 app.get('/test', controller.test);
+app.get('/conference', controller.conference);
+app.get('/conference2', controller.conference2);
+app.get('/test-design', controller.test_design);
 
 
 io.on('connection', function(socket){
@@ -74,4 +78,10 @@ io.on('connection', function(socket){
     Handler.request_files(socket, chat);
     Handler.wrtc_message(socket, chat);
 });
+
+io.of('/rtcmulticonnection/').on('connection', function(socket) {
+    RTCMultiConnectionServer.addSocket(socket);
+});
+
+
 

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug</title>
+</head>
+<body>
+
+
+<script>
+    'use strict';
+
+    class User {
+
+        firstName = 'defaultname';
+
+        constructor(firstName, lastName) {
+            //this.firstName = firstName;
+            this.lastName = lastName;
+        }
+
+        // геттер
+        get fullName() {
+            return `${this.firstName} ${this.lastName}`;
+        }
+
+        // сеттер
+        set fullName(newValue) {
+            [this.firstName, this.lastName] = newValue.split(' ');
+        }
+
+        // вычисляемое название метода
+        ["test".toUpperCase()]() {
+            console.log("PASSED!");
+        }
+
+    };
+
+    let user = new User("Вася", "Пупков");
+    console.log( user.fullName ); // Вася Пупков
+    user.fullName = "Иван Петров";
+    console.log( user.fullName ); // Иван Петров
+    user.TEST(); // PASSED!
+
+
+    class Rect {
+        x = 5;
+        y = 10;
+
+        constructor(x, y) {
+            if (x !== undefined)
+                this.x = x;
+            if (y !== undefined)
+                this.y = y;
+        }
+
+        print(){
+            console.log('x=', this.x, 'y=', this.y);
+        }
+
+        square(){
+            return this.x * this.y;
+        }
+
+        splitter(){
+            console.log('/-----------------------------------------------------/');
+        }
+    };
+
+    let r1 = new Rect(15,20);
+    r1.print();
+
+    let r2 = new Rect();
+    r2.print();
+    r2.splitter();
+
+</script>
+
+
+<script>
+
+    function httpGet(url) {
+        return new Promise(function(resolve, reject) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onload = function() {
+                if (this.status == 200) {
+                    resolve(this.response);
+                } else {
+                    var error = new Error(this.statusText);
+                    error.code = this.status;
+                    reject(error);
+                }
+            };
+            xhr.onerror = function() {
+                reject(new Error("Network Error"));
+            };
+            xhr.send();
+        });
+    }
+
+    var url = 'https://chat2.kuzovkov12.ru/test-file.txt';
+    httpGet(url)
+        .then(
+                (response) => {console.log(`Fulfilled: ${response}`)}
+        ).catch(error => console.log(`Rejected: ${error}`));
+
+    r2.splitter();
+
+    httpGet('https://chat2.kuzovkov12.ru/test-file.txt')
+    .then(response => { var res=JSON.parse(response); var r3 = new Rect(res.x, res.y); return r3.square();})
+    .catch(e => console.log(e))
+    .then( r => {console.log(r); return httpGet('https://chat2.kuzovkov12.ru/test-file2.txt')})
+    .then(response => { var res=JSON.parse(response); var r3 = new Rect(res.x, res.y); return r3.square();})
+    .catch(e => console.log(e))
+    .then(r => {console.log(r); return httpGet('https://chat2.kuzovkov12.ru/test-file3.txt')})
+    .then(response => { var res=JSON.parse(response); var r3 = new Rect(res.x, res.y); return r3.square();})
+    .catch(e => console.log(e))
+
+</script>
+
+
+</body>
+</html>

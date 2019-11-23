@@ -26,6 +26,7 @@ global.io = io;
 var controller = require('./modules/controller');
 var Handler = require('./modules/handler');
 var cons = require('consolidate');
+const RTCMultiConnectionServer = require('rtcmulticonnection-server');
 
 
 server.listen(port,function(){
@@ -79,5 +80,9 @@ io.on('connection', function(socket){
     Handler.message_history(socket, chat);
     Handler.request_files(socket, chat);
     Handler.wrtc_message(socket, chat);
+});
+
+io.of('/rtcmulticonnection/').on('connection', function(socket) {
+    RTCMultiConnectionServer.addSocket(socket);
 });
 

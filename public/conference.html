@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Video Conferencing using RTCMultiConnection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+    <link rel="stylesheet" href="/vendor/muaz-khan/getMediaElement.css">
+    <script type="text/javascript" src="/vendor/muaz-khan/getMediaElement.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/vendor/muaz-khan/DetectRTC.js"></script>
+    <script>
+        // add this script before loading "RTCMultiConnection.min.js"
+        window.getExternalIceServers = true;
+    </script>
+    <script type="text/javascript" src="/vendor/muaz-khan/RTCMultiConnection.min.js"></script>
+    <script type="text/javascript" src="/vendor/muaz-khan/RecordRTC.js"></script>
+</head>
+<body>
+
+    <!-- UI -->
+    <div>
+        <input id="room-id-txt" type="text" placeholder="Room ID">
+        <input id="user-name" type="text" placeholder="You name">
+    </div>
+
+
+    <button id="btn-open-or-join">Open or Join</button>
+    <button id="btn-leave" style="display: none">Leave</button>
+    <hr>
+    <div id="video-container" style="width: 100%; height: 90%;"></div>
+
+
+
+    <!--Logic-->
+    <script type="text/javascript">
+        var connection = new RTCMultiConnection();
+        connection.socketURL = '/rtcmulticonnection/';
+        connection.session = {audio: true, video: true};
+        connection.sdpConstraints.mandatory = {OfferToReceiveAudio: true, OfferToReceiveVideo: true};
+        var videosContainer = document.getElementById('video-container');
+        document.getElementById('room-id-txt').value = 'room1';  //;(Math.random()*100).toString().replace('.', '');
+        var roomid = null;
+        var userName = null;
+
+        document.getElementById('btn-open-or-join').onclick = function(){
+            roomid = document.getElementById('room-id-txt').value;
+            userName = document.getElementById('user-name').value;
+            this.disable = true;
+            connection.openOrJoin(roomid, function(){
+                document.getElementById('btn-leave').style.display = 'block';
+                document.getElementById('btn-open-or-join').style.display = 'none';
+            });
+        };
+
+        document.getElementById('btn-leave').onclick = function(){
+            console.log('leave');
+            connection.closeEntireSession(function() {
+                alert('Entire session has been closed.');
+            });
+        };
+
+        connection.onstream = function (e) {
+            console.log('e:', e);
+            console.log('streamid:', e.streamid);
+            console.log('whatis:', connection.streamEvents[e.streamid]);
+            console.log('e.userid:', e.userid);
+            console.log('peers:', connection.peers);
+
+            var mediaElement = getMediaElement(e.mediaElement, {
+                title: userName,
+                width: (videosContainer.clientWidth / 2) - 50,
+                buttons: ['mute-audio', 'mute-video', 'record-audio', 'record-video', 'full-screen', 'volume-slider', 'stop', 'take-snapshot'],
+                toggle: e.type == 'local' ? ['full-screen', 'mute-audio'] : ['full-screen'],
+                onMuted: function(type) {
+                    // www.RTCMultiConnection.org/docs/mute/
+                    connection.streamEvents[e.streamid].stream.mute({
+                        audio: type == 'audio',
+                        video: type == 'video'
+                    });
+                },
+                onUnMuted: function(type) {
+                    // www.RTCMultiConnection.org/docs/unmute/
+                    connection.streamEvents[e.streamid].stream.unmute({
+                        audio: type == 'audio',
+                        video: type == 'video'
+                    });
+                },
+
+                onRecordingStarted: function(type) {
+                    // www.RTCMultiConnection.org/docs/startRecording/
+                    connection.streamEvents[e.streamid].startRecording({
+                        audio: type == 'audio',
+                        video: type == 'video'
+                    });
+                },
+                onRecordingStopped: function(type) {
+                    // www.RTCMultiConnection.org/docs/stopRecording/
+                    connection.streamEvents[e.streamid].stopRecording(function(blob) {
+                        if (blob.audio) connection.saveToDisk(blob.audio);
+                        else if (blob.video) connection.saveToDisk(blob.audio);
+                        else connection.saveToDisk(blob);
+                    }, type);
+                },
+                onStopped: function() {
+                    connection.peers[e.userid].drop();
+                },
+                onTakeSnapshot: function() {
+                    if (!e.stream.getVideoTracks().length) return;
+
+                    // www.RTCMultiConnection.org/docs/takeSnapshot/
+                    connection.takeSnapshot(e.userid, function(snapshot) {
+                        // on taking snapshot!
+                    });
+                }
+
+            });
+            mediaElement.id = e.userid;
+            mediaElement.addEventListener('click', function (e) {
+                console.log(mediaElement.id);
+                mediaElement.toggle('full-screen');
+            });
+            console.log('mediaElement:', mediaElement);
+            videosContainer.appendChild(mediaElement);
+        };
+
+        connection.onstreamended = function(e) {
+            destroyChildren(videosContainer);
+        };
+
+        /**
+         * destroyChildren
+         * @param node
+         */
+        function destroyChildren (node){
+            if (!node) return;
+            node.innerHTML = '';
+            while (node.firstChild)
+                node.removeChild(node.firstChild);
+        }
+
+    </script>
+
+</body>
+</html>

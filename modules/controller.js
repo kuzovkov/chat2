@@ -123,11 +123,26 @@ function test(req, res){
     res.render('test');
 }
 
+function conference(req, res){
+    res.render('conference');
+}
+
+function conference2(req, res){
+    res.render('conference2');
+}
+
+function test_design(req, res){
+    res.render('test_design');
+}
 
 exports.index = index;
 exports.download_file = download_file;
 exports.remove_file = remove_file;
 exports.choosenicname = choosenicname;
 exports.newUser = newUser;
-exports.test = test;
 exports.upload_file = upload_file;
+/*debug handlers*/
+exports.test = test;
+exports.conference = conference;
+exports.conference2 = conference2;
+exports.test_design = test_design;
