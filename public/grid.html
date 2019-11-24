@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grid</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<style>
+    .container {
+        display: grid;
+        grid-gap: 5px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-rows: repeat(2, 150px);
+    }
+
+    .container div {
+        border: 1px solid grey;
+        background-color: #1c7430;
+    }
+
+    .container > div > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+<div class="container">
+    <div><img src="/img/forest1.jpeg"/></div>
+    <div><img src="/img/forest2.jpeg"/></div>
+    <div><img src="/img/forest3.jpeg"/></div>
+    <div><img src="/img/forest4.jpeg"/></div>
+    <div><img src="/img/forest5.jpeg"/></div>
+    <div><img src="/img/forest6.jpeg"/></div>
+</div>
+
+
+</body>
+</html>
