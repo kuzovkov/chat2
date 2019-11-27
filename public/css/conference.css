@@ -46,6 +46,8 @@ img#btn-select-file, img#btn-share-screen {width: 24px; height: 24px; cursor: po
 div#videos, div#header, div#infobar, div#files {border: 1px solid grey; border-radius: 5px;}
 input#input-message {width: 80%;}
 
+#dialog-message {z-index: 9999;}
+
 
 /*
 * {

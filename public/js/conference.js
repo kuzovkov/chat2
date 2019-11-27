@@ -188,16 +188,46 @@ window.onload = function(){
                 },
                 onTakeSnapshot: function() {
                     if (!e.stream.getVideoTracks().length) return;
-
-                    // www.RTCMultiConnection.org/docs/takeSnapshot/
-                    connection.takeSnapshot(e.userid, function(snapshot) {
-                        // on taking snapshot!
-                    });
+                    var userid = e.userid;
+                    if (typeof ImageCapture === 'function') {
+                        var videoTrack = e.stream.getVideoTracks()[0];
+                        var imageCapture = new ImageCapture(videoTrack);
+                        imageCapture.takePhoto().then(function(blob) {
+                            var photo = URL.createObjectURL(blob);
+                            window.open(photo);
+                        }).catch(function (e) {
+                            imageCapture.grabFrame().then(function (bitmap) {
+                                var canvas = document.createElement('canvas');
+                                var video = mediaElements[userid].media;
+                                canvas.width = video.videoWidth || video.clientWidth;
+                                canvas.height = video.videoHeight || video.clientHeight;
+                                var context = canvas.getContext('2d');
+                                context.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height);
+                                canvas.toBlob(function(blob){
+                                    var photo = URL.createObjectURL(blob);
+                                    window.open(photo);
+                                });
+                            }).catch(function (e) {
+                                dialogMessage(e.toString());
+                            })
+                        });
+                    }
                 }
             });
             mediaElement.id = e.streamid;
             return mediaElement;
         }
+
+
+        function takePhoto(video) {
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || video.clientWidth;
+            canvas.height = video.videoHeight || video.clientHeight;
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL('image/png');
+        }
+
 
         function onStreamHandler(e){
             console.log('e:', e);
