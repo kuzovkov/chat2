@@ -51,6 +51,12 @@ window.onload = function(){
         var userName = null;
         var screen_constraints = {video: true};
 
+        // here goes canvas designer
+        var designer = new CanvasDesigner();
+        // you can place widget.html anywhere
+        designer.widgetHtmlURL = '/vendor/canvas-designer/widget.html';
+        designer.widgetJsURL = '/vendor/canvas-designer/widget.min.js';
+
         btnOpenOrJoin.onclick = onClickOpenRoom;
         btnLeave.onclick = onClickLeave;
         btnSendMessage.onclick = onClickSendMessage;
@@ -565,18 +571,7 @@ window.onload = function(){
 
             var screenTrackId = stream.getTracks()[0].id;
 
-
             addStreamStopListener(stream, function() {
-                //replaceTrack(localStream.getTracks()[0], screenTrackId);
-                /*
-                connection.getAllParticipants().forEach(function(pid) {
-                    var peer = connection.peers[pid].peer;
-                    console.log('1.peer: ', peer);
-                    console.log('screenStream:', screenStream, 'localStream:', localStream);
-                    removeStreamFromRTCPeerConnection(peer, screenStream);
-                    addStreamToRTCPeerConnection(peer, localStream);
-                });
-                */
                 replaceTrack(localStream.getVideoTracks()[0], screenTrackId);
                 btnShareScreen.style.display = 'inline-block';
                 screenStream = null;
@@ -584,21 +579,6 @@ window.onload = function(){
 
             });
 
-            //var audiotracks = localStream.getAudioTracks();
-            //console.log('audio tracks', audiotracks);
-            //if (audiotracks.length > 0){
-            //    console.log('add audio track', audiotracks[0]);
-            //    screenStream.addTrack(audiotracks[0]);
-            //}
-
-            /*
-            connection.getAllParticipants().forEach(function(pid) {
-                var peer = connection.peers[pid].peer;
-                console.log('2.peer: ', peer);
-                removeStreamFromRTCPeerConnection(peer, localStream);
-                addStreamToRTCPeerConnection(peer, screenStream);
-            });
-            */
             stream.getTracks().forEach(function(track) {
                 if(track.kind === 'video' && track.readyState === 'live') {
                     //console.log('track:', track);
@@ -606,84 +586,6 @@ window.onload = function(){
                 }
             });
 
-        }
-
-
-        /*
-        WRTC.onGettingScreenSteam = function(stream){
-            WRTC.screenStream = stream;
-            WRTC.addStreamStopListener(stream, WRTC.onScreenShareEnded);
-            document.getElementById("screenshareButton").style.display = 'none';
-            WRTC.removeStreamFromRTCPeerConnection(WRTC.localStream);
-
-            console.log('audio tracks', audiotracks);
-            if (audiotracks.length > 0){
-                console.log('add audio track', audiotracks[0]);
-                WRTC.screenStream.addTrack(audiotracks[0]);
-            }
-            WRTC.addStreamToRTCPeerConnection(WRTC.screenStream);
-            WRTC.createOffer();
-        };
-
-         WRTC.onScreenShareEnded = function(){
-             console.log('Screen share stopped');
-             document.getElementById("screenshareButton").style.display = 'inline-block';
-             WRTC.removeStreamFromRTCPeerConnection(WRTC.screenStream);
-             WRTC.addStreamToRTCPeerConnection(WRTC.localStream);
-             WRTC.screenStream = null;
-             WRTC.createOffer();
-         };
-
-
-        WRTC.addStreamToRTCPeerConnection = function(stream){
-            try{
-                WRTC.pc.addStream(stream);
-            }catch (e){
-                stream.getTracks().forEach(function(track) {
-                    WRTC.pc.addTrack(track, stream);
-                });
-            }
-        };
-
-
-        WRTC.removeStreamFromRTCPeerConnection = function(stream){
-            try{
-                WRTC.pc.removeStream(stream);
-            }catch (e){
-                WRTC.pc.getSenders().forEach(function(sender){
-                    stream.getTracks().forEach(function(track){
-                        if(track == sender.track){
-                            WRTC.pc.removeTrack(sender);
-                        }
-                    })
-                });
-            }
-        };
-
-        */
-
-        function addStreamToRTCPeerConnection(pc, stream){
-            try{
-                pc.addStream(stream);
-            }catch (e){
-                stream.getTracks().forEach(function(track) {
-                    pc.addTrack(track, stream);
-                });
-            }
-        }
-
-        function removeStreamFromRTCPeerConnection(pc, stream){
-            try{
-                pc.removeStream(stream);
-            }catch (e){
-                pc.getSenders().forEach(function(sender){
-                    stream.getTracks().forEach(function(track){
-                        if(track == sender.track){
-                            pc.removeTrack(sender);
-                        }
-                    })
-                });
-            }
         }
 
          function attachStream(el, stream) {
