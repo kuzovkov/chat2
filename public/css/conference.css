@@ -1,0 +1,69 @@
+body {
+    display: grid;
+    grid-template-areas:
+            "header infobar chat"
+            "videos videos chat"
+            "videos videos chat"
+            "videos videos chat";
+    grid-template-rows: 80px 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-row-gap: 10px;
+    grid-column-gap: 10px;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+}
+/* Stack the layout on small devices/viewports. */
+@media all and (max-width: 575px) {
+    body {
+        grid-template-areas:
+                "header"
+                "infobar"
+                "videos"
+                "chat";
+        grid-template-rows: 80px 80px 1fr 1fr 1fr;
+        grid-template-columns: 1fr;
+    }
+}
+/*
+div {
+    padding: 1.2em;
+    background: #ffffff;
+}*/
+#header {
+    grid-area: header;
+}
+#videos {
+    grid-area: videos;
+}
+#chat {
+    grid-area: chat;
+}
+
+img.checkmark {width: 16px; height: 16px;}
+img#btn-select-file, img#btn-share-screen {width: 24px; height: 24px; cursor: pointer; margin-top: 10px; float: right;}
+
+div#videos, div#header, div#infobar, div#files {border: 1px solid grey; border-radius: 5px;}
+input#input-message {width: 80%;}
+
+#dialog-message {z-index: 9999;}
+
+
+/*
+* {
+    font-family: Arial, Helvetica, san-serif;
+}
+.row:after, .row:before {
+    content: " ";
+    display: table;
+    clear: both;
+}
+.span6 {
+    float: left;
+    width: 48%;
+    padding: 1%;
+}
+.emojionearea-editor:not(.inline) {
+    min-height: 8em!important;
+}
+*/
