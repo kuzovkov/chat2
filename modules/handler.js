@@ -68,6 +68,12 @@ function wrtc_message(socket, chat){
     });
 }
 
+function get_ice(socket, chat) {
+    socket.on('get_ice', function(data){
+        socket.emit('ice', {ice: getIce()});
+    });
+}
+
 
 
 exports.user_connect = user_connect;
@@ -76,3 +82,4 @@ exports.user_message = user_message;
 exports.message_history = message_history;
 exports.request_files = request_files;
 exports.wrtc_message = wrtc_message;
+exports.get_ice = get_ice;
