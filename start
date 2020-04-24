@@ -1,0 +1,4 @@
+#! /bin/sh
+cd /var/www/vhosts/chat1
+#./server_https.js 9000 &
+./server_http.js 9000 &
