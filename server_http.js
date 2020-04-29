@@ -5,6 +5,7 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
+var cors = require('cors')
 var fileUpload = require('express-fileupload');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -45,6 +46,8 @@ server.listen(port,function(){
 });
 
 
+/* CORS */
+app.use(cors());
 
 /* настройки для рендеринга шаблонов*/
 app.engine('html', cons.swig);
