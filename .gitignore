@@ -1,3 +1,4 @@
 /users_files/*
 docker/certbot/conf/
+docker/certbot/conf/live/*
 .idea
