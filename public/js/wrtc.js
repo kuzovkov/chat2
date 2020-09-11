@@ -50,9 +50,6 @@ WRTC.getUserMedia = function(callback){
     navigator.getUserMedia(
         WRTC.mediaOptions,
         callback,
-<<<<<<< HEAD
-        function(error) { console.log(error) }
-=======
         function(error) { WRTC.getUserMedia = function(callback){
             console.log(Date.now(), 'getUserMedia');
             navigator.getUserMedia(
@@ -61,7 +58,6 @@ WRTC.getUserMedia = function(callback){
                 function(error) { console.log(error) }
             );
         }; }
->>>>>>> remotes/gitlab/conference
     );
 };
 
