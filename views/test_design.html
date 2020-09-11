@@ -1,0 +1,754 @@
+<html itemscope="" itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html"><head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="https://web-cdn.jitsi.net/meetjitsi_3711.414/">
+
+    <link rel="stylesheet" href="css/all.css?v=3711.414">
+
+    <!--<script async="" src="https://api.callstats.io/static/callstats-ws.min.js"></script><script async="" src="//www.google-analytics.com/analytics.js"></script>-->
+    <script>
+        // IE11 and earlier can be identified via their user agent and be
+        // redirected to a page that is known to have no newer js syntax.
+        if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
+            window.location.href = "static/recommendedBrowsers.html";
+        }
+
+        window.indexLoadedTime = window.performance.now();
+        console.log("(TIME) index.html loaded:\t", indexLoadedTime);
+        // XXX the code below listeners for errors and displays an error message
+        // in the document body when any of the required files fails to load.
+        // The intention is to prevent from displaying broken page.
+        var criticalFiles = [
+            "config.js",
+            "utils.js",
+            "do_external_connect.js",
+            "interface_config.js",
+            "logging_config.js",
+            "lib-jitsi-meet.min.js",
+            "app.bundle.min.js",
+            "all.css?v=3711.414"
+        ];
+        var loadErrHandler = function(e) {
+            var target = e.target;
+            // Error on <script> and <link>(CSS)
+            // <script> will have .src and <link> .href
+            var fileRef = (target.src ? target.src : target.href);
+            if (("SCRIPT" === target.tagName || "LINK" === target.tagName)
+                && criticalFiles.some(
+                    function(file) { return fileRef.indexOf(file) !== -1 })) {
+                window.onload = function() {
+                    // The whole complex part below implements page reloads with
+                    // "exponential backoff". The retry attempt is passes as
+                    // "rCounter" query parameter
+                    var href = window.location.href;
+
+                    var retryMatch = href.match(/.+(\?|&)rCounter=(\d+)/);
+                    var retryCountStr = retryMatch ? retryMatch[2] : "0";
+                    var retryCount = Number.parseInt(retryCountStr);
+
+                    if (retryMatch == null) {
+                        var separator = href.indexOf("?") === -1 ? "?" : "&";
+                        var hashIdx = href.indexOf("#");
+
+                        if (hashIdx === -1) {
+                            href += separator + "rCounter=1";
+                        } else {
+                            var hashPart = href.substr(hashIdx);
+
+                            href = href.substr(0, hashIdx)
+                                + separator + "rCounter=1" + hashPart;
+                        }
+                    } else {
+                        var separator = retryMatch[1];
+
+                        href = href.replace(
+                            /(\?|&)rCounter=(\d+)/,
+                            separator + "rCounter=" + (retryCount + 1));
+                    }
+
+                    var delay = Math.pow(2, retryCount) * 2000;
+                    if (isNaN(delay) || delay < 2000 || delay > 60000)
+                        delay = 10000;
+
+                    var showMoreText = "show more";
+                    var showLessText = "show less";
+
+                    document.body.innerHTML
+                        = "<div style='"
+                        + "position: absolute;top: 50%;left: 50%;"
+                        + "text-align: center;"
+                        + "font-size: medium;"
+                        + "font-weight: 400;"
+                        + "transform: translate(-50%, -50%)'>"
+                        + "Uh oh! We couldn't fully download everything we needed :("
+                        + "<br/> "
+                        + "We will try again shortly. In the mean time, check for problems with your Internet connection!"
+                        + "<br/><br/> "
+                        + "<div id='moreInfo' style='"
+                        + "display: none;'>" + "Missing " + fileRef
+                        + "<br/><br/></div>"
+                        + "<a id='showMore' style='"
+                        + "text-decoration: underline;"
+                        + "font-size:small;"
+                        + "cursor: pointer'>" + showMoreText + "</a>"
+                        + "&nbsp;&nbsp;&nbsp;"
+                        + "<a id ='reloadLink' style='"
+                        + "text-decoration: underline;"
+                        + "font-size:small;"
+                        + "'>reload now</a>"
+                        + "</div>";
+
+                    var reloadLink = document.getElementById('reloadLink');
+                    reloadLink.setAttribute('href', href);
+
+                    var showMoreElem = document.getElementById("showMore");
+                    showMoreElem.addEventListener('click', function () {
+                            var moreInfoElem
+                                    = document.getElementById("moreInfo");
+
+                            if (showMoreElem.innerHTML === showMoreText) {
+                                moreInfoElem.setAttribute(
+                                    "style",
+                                    "display: block;"
+                                    + "color:#FF991F;"
+                                    + "font-size:small;"
+                                    + "user-select:text;");
+                                showMoreElem.innerHTML = showLessText;
+                            }
+                            else {
+                                moreInfoElem.setAttribute(
+                                    "style", "display: none;");
+                                showMoreElem.innerHTML = showMoreText;
+                            }
+                        });
+
+                    window.setTimeout(
+                        function () { window.location.replace(href); }, delay);
+
+                    // Call extra handler if defined.
+                    if (typeof postLoadErrorHandler === "function") {
+                        postLoadErrorHandler(fileRef);
+                    }
+                };
+                window.removeEventListener(
+                    'error', loadErrHandler, true /* capture phase */);
+            }
+        };
+        window.addEventListener(
+            'error', loadErrHandler, true /* capture phase type of listener */);
+    </script>
+
+
+
+    <!--<script>var subdomain = "";
+if (subdomain) {
+    subdomain = subdomain.substr(0,subdomain.length-1).split('.').join('_').toLowerCase() + '.';
+}
+var config = {
+    hosts: {
+        domain: 'meet.jit.si',
+
+        muc: 'conference.'+subdomain+'meet.jit.si', // FIXME: use XEP-0030
+        focus: 'focus.meet.jit.si',
+    },
+    disableSimulcast: false,
+    enableRemb: false,
+    enableTcc: true,
+    resolution: 720,
+    constraints: {
+        video: {
+            aspectRatio: 16 / 9,
+            height: {
+                ideal: 720,
+                max: 720,
+                min: 180
+            },
+            width: {
+                ideal: 1280,
+                max: 1280,
+                min: 320
+            }
+        }
+    },
+    externalConnectUrl: '//meet.jit.si/http-pre-bind',
+analytics: {
+            amplitudeAPPKey: "fafdba4c3b47fe5f151060ca37f02d2f",
+                scriptURLs: [
+                                "https://meet.jit.si/libs/analytics-ga.min.js",
+                                    ],
+                googleAnalyticsTrackingId: "UA-319188-14",
+                whiteListedEvents: [ 'audio.output.problem', 'peer.conn.status.duration' ],
+    },
+    p2pStunServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
+        { urls: "stun:stun2.l.google.com:19302" }
+    ],
+    enableP2P: true, // flag to control P2P connections
+    // New P2P options
+    p2p: {
+        enabled: true,
+        preferH264: true,
+        disableH264: true,
+        useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server for the P2P connection
+        stunServers: [
+            { urls: "stun:stun.l.google.com:19302" },
+            { urls: "stun:stun1.l.google.com:19302" },
+            { urls: "stun:stun2.l.google.com:19302" }
+        ]
+    },
+    useStunTurn: true, // use XEP-0215 to fetch STUN and TURN server for the JVB connection
+    useIPv6: false, // ipv6 support. use at your own risk
+    useNicks: false,
+    bosh: '//meet.jit.si/http-bind', // FIXME: use xep-0156 for that
+
+    etherpad_base: 'https://meet.jit.si/etherpad/p/',
+    clientNode: 'http://jitsi.org/jitsimeet', // The name of client node advertised in XEP-0115 'c' stanza
+    //deprecated desktop sharing settings, included only because older version of jitsi-meet require them
+    desktopSharing: 'ext', // Desktop sharing method. Can be set to 'ext', 'webrtc' or false to disable.
+    chromeExtensionId: 'kglhbbefdnlheedjiejgomgmfplipfeb', // Id of desktop streamer Chrome extension
+    desktopSharingSources: ['screen', 'window'],
+    googleApiApplicationClientID: "39065779381-bbhnkrgibtf4p0j9ne5vsq7bm49t1tlf.apps.googleusercontent.com",
+    microsoftApiApplicationClientID: "00000000-0000-0000-0000-000040240063",
+    enableCalendarIntegration: true,
+    //new desktop sharing settings
+    desktopSharingChromeExtId: 'kglhbbefdnlheedjiejgomgmfplipfeb', // Id of desktop streamer Chrome extension
+    desktopSharingChromeDisabled: false,
+    desktopSharingChromeSources: ['screen', 'window', 'tab'],
+    desktopSharingChromeMinExtVersion: '0.2.6.2', // Required version of Chrome extension
+    desktopSharingFirefoxExtId: "",
+    desktopSharingFirefoxDisabled: false,
+    desktopSharingFirefoxMaxVersionExtRequired: '0',
+    desktopSharingFirefoxExtensionURL: "",
+    useRoomAsSharedDocumentName: false,
+    enableLipSync: false, // Disables lip-sync everywhere.
+    disableRtx: false, // Enables RTX everywhere
+    enableRtpStats: false, // Enables RTP stats processing
+    enableStatsID: true,
+    openBridgeChannel: 'websocket', // One of true, 'datachannel', or 'websocket'
+    channelLastN: -1, // The default value of the channel attribute last-n.
+    minHDHeight: 540,
+    startBitrate: "800",
+    disableAudioLevels: false,
+    useRtcpMux: true,
+    useBundle: true,
+    disableSuspendVideo: true,
+    stereo: false,
+    forceJVB121Ratio:  -1,
+    enableTalkWhileMuted: true,
+
+    enableClosePage: true,
+
+    callStatsCustomScriptUrl: "https://api.callstats.io/static/callstats-ws.min.js",
+
+    hiddenDomain: 'recorder.meet.jit.si',
+    dropbox: {
+        appKey: '3v5iyto7n7az02w'
+    },
+    transcribingEnabled: false,
+    enableRecording: true,
+    liveStreamingEnabled: true,
+    fileRecordingsEnabled: true,
+    fileRecordingsServiceEnabled: false,
+    fileRecordingsServiceSharingEnabled: false,
+    requireDisplayName: false,
+    recordingType: 'jibri',
+    enableWelcomePage: true,
+    isBrand: false,
+    logStats: false,
+// To enable sending statistics to callstats.io you should provide Applicaiton ID and Secret.
+    callStatsID: "347489791",//Application ID for callstats.io API
+    callStatsSecret: "169aw6v+hk9TbVuHN2SiDCgfkkU=",//Secret for callstats.io API
+    dialInNumbersUrl: 'https://api.jitsi.net/phoneNumberList',
+    dialInConfCodeUrl:  'https://api.jitsi.net/conferenceMapper',
+
+    dialOutCodesUrl:  'https://api.jitsi.net/countrycodes',
+    dialOutAuthUrl: 'https://api.jitsi.net/authorizephone',
+    peopleSearchUrl: 'https://api.jitsi.net/directorySearch',
+    inviteServiceUrl: 'https://api.jitsi.net/conferenceInvite',
+    inviteServiceCallFlowsUrl: 'https://api.jitsi.net/conferenceinvitecallflows',
+    peopleSearchQueryTypes: ['user','conferenceRooms'],
+    startAudioMuted: 9,
+    startVideoMuted: 9,
+    enableUserRolesBasedOnToken: false,
+    enableLayerSuspension: false,
+    hepopAnalyticsUrl: "",
+    hepopAnalyticsEvent: {
+        product: "lib-jitsi-meet",
+        subproduct: "meet-jit-si",
+        name: "jitsi.page.load.failed",
+        action: "page.load.failed",
+        actionSubject: "page.load",
+        type: "page.load.failed",
+        source: "page.load",
+        attributes: {
+            type: "operational",
+            source: 'page.load'
+        },
+        server: "meet.jit.si"
+    },
+    deploymentInfo: {
+        environment: 'meet-jit-si',
+        envType: 'prod',
+        releaseNumber: '229',
+        shard: 'meet-jit-si-eu-central-1a-s4',
+        region: 'eu-central-1',
+        userRegion: 'eu-central-1',
+        crossRegion: (!'eu-central-1' || 'eu-central-1' === 'eu-central-1') ? 0 : 1
+    },
+    rttMonitor: {
+        enabled: false,
+        initialDelay: 30000,
+        getStatsInterval: 10000,
+        analyticsInterval: 60000,
+        stunServers: {"us-east-1": "all-us-east-1-turn.jitsi.net:443", "ap-se-2": "all-ap-se-2-turn.jitsi.net:443", "ap-se-1": "all-ap-se-1-turn.jitsi.net:443", "us-west-2": "all-us-west-2-turn.jitsi.net:443", "eu-central-1": "all-eu-central-1-turn.jitsi.net:443", "eu-west-1": "all-eu-west-1-turn.jitsi.net:443"}
+    },
+    abTesting: {
+    },
+    testing: {
+        capScreenshareBitrate: 1,
+        octo: {
+            probability: 0
+        }
+    }
+};
+</script>-->     <!-- adapt to your needs, i.e. set hosts and bosh path -->
+
+
+
+    <!--<script src="libs/external_connect.js?v=1"></script>
+
+    <script src="libs/do_external_connect.min.js?v=1"></script>-->
+
+
+    <!--<script>/* eslint-disable no-unused-vars, no-var, max-len */
+
+var interfaceConfig = {
+    // TO FIX: this needs to be handled from SASS variables. There are some
+    // methods allowing to use variables both in css and js.
+    DEFAULT_BACKGROUND: '#474747',
+
+    /**
+     * Whether or not the blurred video background for large video should be
+     * displayed on browsers that can support it.
+     */
+    DISABLE_VIDEO_BACKGROUND: false,
+
+    INITIAL_TOOLBAR_TIMEOUT: 20000,
+    TOOLBAR_TIMEOUT: 4000,
+    TOOLBAR_ALWAYS_VISIBLE: false,
+    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
+    DEFAULT_LOCAL_DISPLAY_NAME: 'me',
+    SHOW_JITSI_WATERMARK: true,
+    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+
+    // if watermark is disabled by default, it can be shown only for guests
+    SHOW_WATERMARK_FOR_GUESTS: true,
+    SHOW_BRAND_WATERMARK: false,
+    BRAND_WATERMARK_LINK: '',
+    SHOW_POWERED_BY: false,
+    SHOW_DEEP_LINKING_IMAGE: false,
+    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+    DISPLAY_WELCOME_PAGE_CONTENT: true,
+    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
+    APP_NAME: 'Jitsi Meet',
+    NATIVE_APP_NAME: 'Jitsi Meet',
+    PROVIDER_NAME: 'Jitsi',
+    LANG_DETECTION: false, // Allow i18n to detect the system language
+    INVITATION_POWERED_BY: true,
+
+    /**
+     * If we should show authentication block in profile
+     */
+    AUTHENTICATION_ENABLE: true,
+
+    /**
+     * The name of the toolbar buttons to display in the toolbar. If present,
+     * the button will display. Exceptions are "livestreaming" and "recording"
+     * which also require being a moderator and some values in config.js to be
+     * enabled. Also, the "profile" button will not display for user's with a
+     * jwt.
+     */
+    TOOLBAR_BUTTONS: [
+        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
+        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+        'tileview', 'videobackgroundblur', 'download', 'help'
+    ],
+
+    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
+
+    // Determines how the video would fit the screen. 'both' would fit the whole
+    // screen, 'height' would fit the original video height to the height of the
+    // screen, 'width' would fit the original video width to the width of the
+    // screen respecting ratio.
+    VIDEO_LAYOUT_FIT: 'both',
+
+    /**
+     * Whether to only show the filmstrip (and hide the toolbar).
+     */
+    filmStripOnly: false,
+
+    /**
+     * Whether to show thumbnails in filmstrip as a column instead of as a row.
+     */
+    VERTICAL_FILMSTRIP: true,
+
+    // A html text to be shown to guests on the close page, false disables it
+    CLOSE_PAGE_GUEST_HINT: '<div class = "hint-msg">Use Jitsi with your Slack team. <a href = "https://jitsi.org/slack" rel = "noopener" target = "_blank">Enable now.</a>',
+    RANDOM_AVATAR_URL_PREFIX: 'https://abotars.jitsi.net/meeple/',
+    RANDOM_AVATAR_URL_SUFFIX: '',
+    FILM_STRIP_MAX_HEIGHT: 120,
+
+    // Enables feedback star animation.
+    ENABLE_FEEDBACK_ANIMATION: false,
+    DISABLE_FOCUS_INDICATOR: true,
+    DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
+
+    /**
+     * Whether the speech to text transcription subtitles panel is disabled.
+     * If {@code undefined}, defaults to {@code false}.
+     *
+     * @type {boolean}
+     */
+    DISABLE_TRANSCRIPTION_SUBTITLES: false,
+
+    /**
+     * Whether the ringing sound in the call/ring overlay is disabled. If
+     * {@code undefined}, defaults to {@code false}.
+     *
+     * @type {boolean}
+     */
+    DISABLE_RINGING: false,
+    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
+    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
+    POLICY_LOGO: null,
+    LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
+    REMOTE_THUMBNAIL_RATIO: 1, // 1:1
+    // Documentation reference for the live streaming feature.
+    LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live',
+
+    /**
+     * Whether the mobile app Jitsi Meet is to be promoted to participants
+     * attempting to join a conference in a mobile Web browser. If
+     * {@code undefined}, defaults to {@code true}.
+     *
+     * @type {boolean}
+     */
+    MOBILE_APP_PROMO: true,
+
+    /**
+     * Maximum coeficient of the ratio of the large video to the visible area
+     * after the large video is scaled to fit the window.
+     *
+     * @type {number}
+     */
+    MAXIMUM_ZOOMING_COEFFICIENT: 1.3,
+
+    /*
+     * If indicated some of the error dialogs may point to the support URL for
+     * help.
+     */
+    SUPPORT_URL: 'https://github.com/jitsi/jitsi-meet/issues/new',
+
+    /**
+     * Whether the connection indicator icon should hide itself based on
+     * connection strength. If true, the connection indicator will remain
+     * displayed while the participant has a weak connection and will hide
+     * itself after the CONNECTION_INDICATOR_HIDE_TIMEOUT when the connection is
+     * strong.
+     *
+     * @type {boolean}
+     */
+    CONNECTION_INDICATOR_AUTO_HIDE_ENABLED: true,
+
+    /**
+     * How long the connection indicator should remain displayed before hiding.
+     * Used in conjunction with CONNECTION_INDICATOR_AUTOHIDE_ENABLED.
+     *
+     * @type {number}
+     */
+    CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000,
+
+    /**
+     * If true, hides the connection indicators completely.
+     *
+     * @type {boolean}
+     */
+    CONNECTION_INDICATOR_DISABLED: false,
+
+    /**
+     * If true, hides the video quality label indicating the resolution status
+     * of the current large video.
+     *
+     * @type {boolean}
+     */
+    VIDEO_QUALITY_LABEL_DISABLED: false,
+
+    /**
+     * If true, will display recent list
+     *
+     * @type {boolean}
+     */
+    RECENT_LIST_ENABLED: true,
+
+    // Names of browsers which should show a warning stating the current browser
+    // has a suboptimal experience. Browsers which are not listed as optimal or
+    // unsupported are considered suboptimal. Valid values are:
+    // chrome, chromium, edge, electron, firefox, nwjs, opera, safari
+    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron' ],
+
+    // Browsers, in addition to those which do not fully support WebRTC, that
+    // are not supported and should show the unsupported browser page.
+    UNSUPPORTED_BROWSERS: [],
+
+    /**
+     * A UX mode where the last screen share participant is automatically
+     * pinned. Valid values are the string "remote-only" so remote participants
+     * get pinned but not local, otherwise any truthy value for all participants,
+     * and any falsy value to disable the feature.
+     *
+     * Note: this mode is experimental and subject to breakage.
+     */
+    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only'
+
+    /**
+     * How many columns the tile view can expand to. The respected range is
+     * between 1 and 5.
+     */
+    // TILE_VIEW_MAX_COLUMNS: 5,
+
+    /**
+     * Specify custom URL for downloading android mobile app.
+     */
+    // MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+
+    /**
+     * Specify URL for downloading ios mobile app.
+     */
+    // MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
+
+    /**
+     * Specify mobile app scheme for opening the app from the mobile browser.
+     */
+    // APP_SCHEME: 'org.jitsi.meet',
+
+    /**
+     * Specify the Android app package name.
+     */
+    // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
+
+    /**
+     * Override the behavior of some notifications to remain displayed until
+     * explicitly dismissed through a user action. The value is how long, in
+     * milliseconds, those notifications should remain displayed.
+     */
+    // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 15000,
+
+    // List of undocumented settings
+    /**
+     INDICATOR_FONT_SIZES
+     MOBILE_DYNAMIC_LINK
+     PHONE_NUMBER_REGEX
+    */
+};
+
+/* eslint-enable no-unused-vars, no-var, max-len */
+</script>-->
+
+
+    <!--<script>/* eslint-disable no-unused-vars, no-var */
+
+// Logging configuration
+var loggingConfig = {
+    // default log level for the app and lib-jitsi-meet
+    defaultLogLevel: 'trace',
+
+    // Option to disable LogCollector (which stores the logs on CallStats)
+    // disableLogCollector: true,
+
+    // The following are too verbose in their logging with the
+    // {@link #defaultLogLevel}:
+    'modules/RTC/TraceablePeerConnection.js': 'info',
+    'modules/statistics/CallStats.js': 'info',
+    'modules/xmpp/strophe.util.js': 'log'
+};
+
+/* eslint-enable no-unused-vars, no-var */
+
+// XXX Web/React server-includes logging_config.js into index.html.
+// Mobile/react-native requires it in react/features/base/logging. For the
+// purposes of the latter, (try to) export loggingConfig. The following
+// detection of a module system is inspired by webpack.
+typeof module === 'object'
+    && typeof exports === 'object'
+    && (module.exports = loggingConfig);
+</script>-->
+
+
+    <script src="libs/lib-jitsi-meet.min.js?v=3711.414"></script>
+
+    <script src="libs/app.bundle.min.js?v=3711.414"></script><style data-styled-components=""></style>
+
+
+    <title>Jitsi Meet</title>
+<meta property="og:title" content="Jitsi Meet">
+<meta property="og:image" content="images/jitsilogo.png?v=1">
+<meta property="og:description" content="Join a WebRTC video conference powered by the Jitsi Videobridge">
+<meta description="Join a WebRTC video conference powered by the Jitsi Videobridge">
+<meta itemprop="name" content="Jitsi Meet">
+<meta itemprop="description" content="Join a WebRTC video conference powered by the Jitsi Videobridge">
+<meta itemprop="image" content="images/jitsilogo.png?v=1">
+<link rel="icon" type="image/png" href="images/favicon.ico?v=1">
+
+    
+
+<!--<script>
+(function() {
+  var filter_list=[];
+  if (filter_list && filter_list.length >0) {
+    interfaceConfig.TOOLBAR_BUTTONS = interfaceConfig.TOOLBAR_BUTTONS.filter(function (e) {
+      return filter_list.indexOf(e) == -1;
+    });
+  }
+
+  // Function called when any of the critical index.html resources
+  // fail to load.
+  window.postLoadErrorHandler = function (fileRef) {
+    if (typeof config.hepopAnalyticsUrl !== 'string'
+        || typeof config.hepopAnalyticsEvent !== "object") {
+        // Nothing to be done here
+        return;
+    }
+    function responseHandler () {
+        console.log("HEPop analytics response:", this.responseText);
+    }
+    // Set required dynamic fields
+    var event = config.hepopAnalyticsEvent;
+    event.serverTime = new Date().getTime();
+
+    if (config) {
+        event.user = config.deploymentInfo;
+    } else {
+        event.user = {};
+    }
+    event.device_id=Math.random().toString(36).substring(2);
+
+    if (window.localStorage) {
+        event.user.callstats_name
+            = window.localStorage.callStatsUserName;
+    }
+
+    if (fileRef) {
+        event.user.reason = fileRef;
+    }
+    event.user.url = window.location.href;
+    event.user.conference_name = window.location.pathname.substr(1,window.location.pathname.length-1);
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.addEventListener("load", responseHandler);
+    xhttp.open("POST", config.hepopAnalyticsUrl, true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(event));
+  };
+}());
+</script>-->
+
+
+
+
+    <template id="welcome-page-additional-content-template">
+<div class="welcome-page-content">
+    <div class="more-footer">
+        <div class="more-section">
+            <div class="more-section-content">
+                <p class="more-section-title">JITSI ON MOBILE</p>
+                <p class="more-section-text">Download our mobile apps and start a call anywhere you are on your phone or tablet.</p>
+                <div class="more-section-links">
+                    <a href="https://itunes.apple.com/us/app/jitsi-meet/id1165103905" rel="noopener" target="_blank">
+                        <img src="images/welcome_page/appstore.svg">
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=org.jitsi.meet" rel="noopener" target="_blank">
+                        <img src="images/welcome_page/googleplay.png">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="more-section">
+            <div class="more-section-content">
+                <p class="more-section-title">JITSI FOR SLACK</p>
+                <p class="more-section-text">Hello Slack fans! Very pleased to meet you! There's no need to create an account. Just click below, and off you go!</p>
+                <div class="more-section-links">
+                    <a href="https://slack.com/oauth/authorize?client_id=116888949298.122751011265&amp;scope=bot,commands" rel="noopener" target="_blank">
+                        <img alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="welcome-footer">
+        <!--<div class="welcome-footer-curve"></div>-->
+        <div class="welcome-footer-content">
+            <div class="welcome-footer-about">
+                <div>
+                    Jitsi Meet is proudly powered by an awesome <a href="https://www.github.com/jitsi" rel="noopener" target="_blank">open source community</a> and <a href="https://www.8x8.com" rel="noopener" target="_blank">8x8</a>.
+                </div>
+            </div>
+            <div class="welcome-footer-connect">
+                <div class="welcome-footer-connect-links">
+                    <ul>
+                        <li><a href="https://www.facebook.com/jitsi" rel="noopener" target="_blank"><img src="images/welcome_page/facebook.svg"></a></li>
+                        <li><a href="https://www.linkedin.com/company/8x8/" rel="noopener" target="_blank"><img src="images/welcome_page/linkedin.svg"></a></li>
+                        <li><a href="https://www.github.com/jitsi" rel="noopener" target="_blank"><img src="images/welcome_page/github.svg"></a></li>
+                        <li><a href="https://www.twitter.com/jitsinews" rel="noopener" target="_blank"><img src="images/welcome_page/twitter.svg"></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div></template>
+
+    <template id="settings-toolbar-additional-content-template"></template>
+
+  <style type="text/css">
+    body { background: #1B2638; }
+  </style><style type="text/css">
+    body { background: #1B2638; }
+  </style>
+
+    <!--<script async="" src="https://meet.jit.si/libs/analytics-ga.min.js"></script>-->
+
+
+
+    <style type="text/css">
+
+    body { background: #1B2638; }
+  </style><style type="text/css">
+    body { background: #1B2638; }
+  </style><style type="text/css">
+    body { background: #1B2638; }
+  </style></head>
+  <body>
+    
+    <div id="react"><div class="AtlaskitThemeProvider__LegacyReset-sc-431dkp-0 tOoji"><div class="vertical-filmstrip" id="videoconference_page"><div class="subject visible"><span class="subject-text">Accurate Wolves Merge Sideways</span><div class="participants-count"><span class="participants-count-number">2</span><span class="participants-count-icon"></span></div></div><div id="videospace"><div class="videocontainer" id="largeVideoContainer" style="display: inline-block; background: rgb(71, 71, 71);"><div id="sharedVideo"><div id="sharedVideoIFrame"></div></div><div id="etherpad"></div><div><a href="https://jitsi.org" target="_new"><div class="watermark leftwatermark" style="visibility: visible;"></div></a></div><div id="dominantSpeaker" style="top: 256.5px; visibility: visible;" class=""><div class="dynamic-shadow" style="box-shadow: rgba(255, 255, 255, 0.4) 0px 0px 2px 20px, rgba(255, 255, 255, 0.2) 0px 0px 6px 31px;"></div><div id="dominantSpeakerAvatarContainer"><div class="avatar  " id="dominantSpeakerAvatar" style="background-color: rgba(128, 128, 255, 0.4); font-size: 100px; height: 200px; width: 200px;"><svg class="avatar-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><foreignObject height="100%" width="100%"><span class="avatar-foreign">A</span></foreignObject></svg></div></div></div><div id="remotePresenceMessage" style="top: 516.5px;"></div><span id="remoteConnectionMessage" style="top: 516.5px; display: none;" data-i18n="connection.USER_CONNECTION_INTERRUPTED" data-i18n-options="{&quot;displayName&quot;:&quot;Alex&quot;}">Alex is having connectivity issues...</span><div id="largeVideoElementsContainer" style="opacity: 0; visibility: hidden;"><div id="largeVideoBackgroundContainer"><div class="large-video-background    "><canvas id="largeVideoBackground"></canvas></div></div><div id="largeVideoWrapper" style="width: 520px; left: -60px; right: -60px; height: 390px; top: 211.5px; bottom: 211.5px; overflow: hidden;"><video autoplay="" id="largeVideo" style="transform: none;" class=""></video></div></div><span id="localConnectionMessage" class="hide" data-i18n="connection.RECONNECTING">A network problem occurred. Reconnecting...</span></div><div class="large-video-labels  without-filmstrip"><div><div class="circular-label no-video" id="videoResolutionLabel">AUD</div></div></div><div class="filmstrip reduce-height"><div class="filmstrip__toolbar"><button id="toggleFilmstripButton"><div class="jitsi-icon "><svg height="24" width="24" viewBox="0 0 32 32"><path d="M16 10.688l8 8-1.875 1.875L16 14.438l-6.125 6.125L8 18.688z"></path></svg></div></button></div><div class="filmstrip__videos hidden" id="remoteVideos"><div class="filmstrip__videos" id="filmstripLocalVideo" style="width: 124px;"><div id="filmstripLocalVideoThumbnail"><span class="videocontainer display-video" id="localVideoContainer" style="display: inline-block; height: 67.5px; min-height: 67.5px; min-width: 120px; width: 120px;">
+        <div class="videocontainer__background"></div>
+        <span id="localVideoWrapper"><video autoplay="" class="flipVideoX" id="localVideo_container"></video></span>
+        <div class="videocontainer__toolbar"><div></div></div>
+        <div class="videocontainer__toptoolbar"><div><div class="AtlaskitThemeProvider__LegacyReset-sc-431dkp-0 tOoji"><div class="indicator-container show-connection-indicator" id=""><div><div><div><div class="popover-trigger"><div class="connection-indicator indicator status-med" style="font-size: 6px;"><div class="connection indicatoricon"><span class="connection_empty"><div class="jitsi-icon icon-gsm-bars"><svg height="1em" width="1em" viewBox="0 0 32 32"><path d="M28 0a4 4 0 014 4v24a4 4 0 01-8 0V4a4 4 0 014-4zM16 8a4 4 0 014 4v16a4 4 0 01-8 0V12a4 4 0 014-4zM4 20a4 4 0 014 4v4a4 4 0 01-8 0v-4a4 4 0 014-4z"></path></svg></div></span><span class="connection_full" style="width: 66%;"><div class="jitsi-icon icon-gsm-bars"><svg height="1em" width="1em" viewBox="0 0 32 32"><path d="M28 0a4 4 0 014 4v24a4 4 0 01-8 0V4a4 4 0 014-4zM16 8a4 4 0 014 4v16a4 4 0 01-8 0V12a4 4 0 014-4zM4 20a4 4 0 014 4v4a4 4 0 01-8 0v-4a4 4 0 014-4z"></path></svg></div></span></div></div></div></div></div><div class="sc-ifAKCX fqtRUK"><div style="top: 0px; left: 0px; position: fixed; z-index: 400; transform: translate3d(150px, 19px, 0px);"></div></div></div></div></div></div></div>
+        <div class="videocontainer__hoverOverlay"></div>
+        <div class="displayNameContainer"><span class="displayname" id="localDisplayName">hi (me)</span></div>
+        <div class="avatar-container" style="height: 33.75px; width: 33.75px;"><div class="avatar  userAvatar" style="background-color: rgba(128, 128, 255, 0.4); font-size: 16.875px; height: 33.75px; width: 33.75px;"><svg class="avatar-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><foreignObject height="100%" width="100%"><span class="avatar-foreign">H</span></foreignObject></svg></div></div><span class="audioindicator-container"><span class="audioindicator in-react"><span class="audiodot-bottom" style="opacity: 0;"></span><span class="audiodot-bottom" style="opacity: 0;"></span><span class="audiodot-middle" style="opacity: 0.0531022;"></span><span class="audiodot-top" style="opacity: 0;"></span><span class="audiodot-top" style="opacity: 0;"></span></span></span></span></div></div><div class="filmstrip__videos" id="filmstripRemoteVideos"><div class="remote-videos-container" id="filmstripRemoteVideosContainer" style=""><span id="participant_e0a32b1b" class="videocontainer active-speaker display-avatar-with-name" style="display: inline-block; height: 120px; min-height: 120px; min-width: 120px; width: 120px;"><video muted="true" autoplay="" id="remoteVideo_d8a0c431-f2ea-43fe-b5ad-97d006b83e60-1" style="" class=""></video><audio autoplay="" id="remoteAudio_c50088d2-0c71-47b6-97d1-23a6dfe1720a-1" style="display: none;"></audio>
+        <div class="videocontainer__background"></div>
+        <div class="videocontainer__toptoolbar"><div><div class="AtlaskitThemeProvider__LegacyReset-sc-431dkp-0 tOoji"><div class="indicator-container hide-connection-indicator" id=""><div><div><div><div class="popover-trigger"><div class="connection-indicator indicator status-high" style="font-size: 6px;"><div class="connection indicatoricon"><span class="connection_empty"><div class="jitsi-icon icon-gsm-bars"><svg height="1em" width="1em" viewBox="0 0 32 32"><path d="M28 0a4 4 0 014 4v24a4 4 0 01-8 0V4a4 4 0 014-4zM16 8a4 4 0 014 4v16a4 4 0 01-8 0V12a4 4 0 014-4zM4 20a4 4 0 014 4v4a4 4 0 01-8 0v-4a4 4 0 014-4z"></path></svg></div></span><span class="connection_full" style="width: 100%;"><div class="jitsi-icon icon-gsm-bars"><svg height="1em" width="1em" viewBox="0 0 32 32"><path d="M28 0a4 4 0 014 4v24a4 4 0 01-8 0V4a4 4 0 014-4zM16 8a4 4 0 014 4v16a4 4 0 01-8 0V12a4 4 0 014-4zM4 20a4 4 0 014 4v4a4 4 0 01-8 0v-4a4 4 0 014-4z"></path></svg></div></span></div></div></div></div></div><div class="sc-ifAKCX fqtRUK"><div style="top: 0px; left: 0px; position: absolute; z-index: 400; opacity: 0;"></div></div></div></div></div></div></div>
+        <div class="videocontainer__toolbar"><div><div class="indicator-container"><div><span class="indicator-icon-container videoMuted toolbar-icon" id=""><div class="jitsi-icon "><svg height="13" id="camera-disabled" width="13" viewBox="0 0 32 32"><path d="M4.375 2.688L28 26.313l-1.688 1.688-4.25-4.25c-.188.125-.5.25-.75.25h-16c-.75 0-1.313-.563-1.313-1.313V9.313c0-.75.563-1.313 1.313-1.313h1L2.687 4.375zm23.625 6v14.25L13.062 8h8.25c.75 0 1.375.563 1.375 1.313v4.688z"></path></svg></div></span></div></div></div></div>
+        <div class="videocontainer__hoverOverlay"></div>
+        <div class="displayNameContainer"><span class="displayname" id="participant_e0a32b1b_name">Alex</span></div>
+        <div class="avatar-container" style="height: 60px; width: 60px;"><div class="avatar  userAvatar" style="background-color: rgba(128, 128, 255, 0.4); font-size: 30px; height: 60px; width: 60px;"><svg class="avatar-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><foreignObject height="100%" width="100%"><span class="avatar-foreign">A</span></foreignObject></svg></div></div>
+        <div class="presence-label-container"></div>
+        <span class="remotevideomenu"><div class="AtlaskitThemeProvider__LegacyReset-sc-431dkp-0 tOoji"><div class="" id=""><div><div><div><span class="popover-trigger remote-video-menu-trigger"><div class="jitsi-icon "><svg height="1em" width="1em" viewBox="0 0 24 24"><path d="M12 15.984c1.078 0 2.016.938 2.016 2.016s-.938 2.016-2.016 2.016S9.984 19.078 9.984 18s.938-2.016 2.016-2.016zm0-6c1.078 0 2.016.938 2.016 2.016s-.938 2.016-2.016 2.016S9.984 13.078 9.984 12 10.922 9.984 12 9.984zm0-1.968c-1.078 0-2.016-.938-2.016-2.016S10.922 3.984 12 3.984s2.016.938 2.016 2.016S13.078 8.016 12 8.016z"></path></svg></div></span></div></div><div class="sc-ifAKCX fqtRUK"><div style="top: 0px; left: 0px; position: absolute; z-index: 400; opacity: 0;"></div></div></div></div></div></span><span class="audioindicator-container"><span class="audioindicator in-react"><span class="audiodot-bottom" style="opacity: 0;"></span><span class="audiodot-bottom" style="opacity: 0.669057;"></span><span class="audiodot-middle" style="opacity: 1;"></span><span class="audiodot-top" style="opacity: 0.669057;"></span><span class="audiodot-top" style="opacity: 0;"></span></span></span></span><div id="localVideoTileViewContainer"></div></div></div></div></div></div><div class="new-toolbox visible " id="new-toolbox"><div class="toolbox-background"></div><div class="toolbox-content"><div class="button-group-left"><div aria-label="Toggle screenshare" class="toolbox-button"><div><div class="toolbox-icon "><div class="jitsi-icon "><svg height="24" width="24" viewBox="0 0 32 32"><path d="M28 22.688v-16H4v16h24zM28 4c1.438 0 2.688 1.25 2.688 2.688l-.063 16A2.64 2.64 0 0128 25.313h-6.688v2.688H10.687v-2.688H3.999c-1.438 0-2.688-1.188-2.688-2.625v-16C1.311 5.25 2.561 4 3.999 4h24z"></path></svg></div></div></div></div></div><div class="button-group-center"><div aria-label="Toggle mute audio" class="toolbox-button"><div><div class="toolbox-icon  "><div class="jitsi-icon "><svg height="24" width="24" viewBox="0 0 32 32"><path d="M23.063 14.688h2.25c0 4.563-3.625 8.313-8 8.938v4.375h-2.625v-4.375c-4.375-.625-8-4.375-8-8.938h2.25c0 4 3.375 6.75 7.063 6.75s7.063-2.75 7.063-6.75zm-7.063 4c-2.188 0-4-1.813-4-4v-8c0-2.188 1.813-4 4-4s4 1.813 4 4v8c0 2.188-1.813 4-4 4z"></path></svg></div></div></div></div><div aria-label="Leave the call" class="toolbox-button"><div><div class="toolbox-icon  "><div class="jitsi-icon "><svg height="24" width="24" viewBox="0 0 32 32"><path d="M16 12c-2.125 0-4.188.313-6.125.938v4.125c0 .5-.313 1.063-.75 1.25a13.87 13.87 0 00-3.563 2.438c-.25.25-.563.375-.938.375s-.688-.125-.938-.375L.373 17.438c-.25-.25-.375-.563-.375-.938s.125-.688.375-.938c4.063-3.875 9.563-6.25 15.625-6.25s11.563 2.375 15.625 6.25c.25.25.375.563.375.938s-.125.688-.375.938l-3.313 3.313c-.25.25-.563.375-.938.375s-.688-.125-.938-.375a13.87 13.87 0 00-3.563-2.438c-.438-.188-.75-.625-.75-1.188V13c-1.938-.625-4-1-6.125-1z"></path></svg></div></div></div></div><div aria-label="Toggle mute video" class="toolbox-button"><div><div class="toolbox-icon  "><div class="jitsi-icon "><svg height="24" width="24" viewBox="0 0 32 32"><path d="M22.688 14l5.313-5.313v14.625l-5.313-5.313v4.688c0 .75-.625 1.313-1.375 1.313h-16C4.563 24 4 23.437 4 22.687V9.312c0-.75.563-1.313 1.313-1.313h16c.75 0 1.375.563 1.375 1.313V14z"></path></svg></div></div></div></div></div><div class="button-group-right"><div class="toolbox-button-wth-dialog"><div><div><div><div aria-label="Toggle more actions menu" class="toolbox-button"><div><div class="toolbox-icon "><div class="jitsi-icon "><svg height="24" width="24" viewBox="0 0 24 24"><path d="M12 15.984c1.078 0 2.016.938 2.016 2.016s-.938 2.016-2.016 2.016S9.984 19.078 9.984 18s.938-2.016 2.016-2.016zm0-6c1.078 0 2.016.938 2.016 2.016s-.938 2.016-2.016 2.016S9.984 13.078 9.984 12 10.922 9.984 12 9.984zm0-1.968c-1.078 0-2.016-.938-2.016-2.016S10.922 3.984 12 3.984s2.016.938 2.016 2.016S13.078 8.016 12 8.016z"></path></svg></div></div></div></div></div></div><div class="sc-ifAKCX fqtRUK"><div style="top: 0px; left: 0px; position: absolute; z-index: 400; transform: translate3d(152px, -468px, 0px);"></div></div></div></div></div></div></div><div class="sideToolbarContainer invisible" id="sideToolbarContainer"></div></div></div><audio preload="auto" src="sounds/joined.wav"></audio><audio preload="auto" src="sounds/left.wav"></audio><audio preload="auto" src="sounds/incomingMessage.wav"></audio><audio preload="auto" src="sounds/talkWhileMuted.mp3"></audio><audio preload="auto" src="sounds/rejected.wav"></audio><audio preload="auto" src="sounds/rejected.wav"></audio><audio loop="" preload="auto" src="sounds/outgoingRinging.wav"></audio><audio preload="auto" src="sounds/outgoingStart.wav"></audio><audio preload="auto" src="sounds/liveStreamingOff.mp3"></audio><audio preload="auto" src="sounds/liveStreamingOn.mp3"></audio><audio preload="auto" src="sounds/recordingOff.mp3"></audio><audio preload="auto" src="sounds/recordingOn.mp3"></audio><div class="AtlaskitThemeProvider__LegacyReset-sc-431dkp-0 tOoji"></div></div>
+  
+
+<ul class="context-menu-list context-menu-root" style="display: none;"><li class="context-menu-item"><span>Flip</span></li></ul><textarea style="min-height: 0px !important; max-height: none !important; height: 0px !important; visibility: hidden !important; overflow: hidden !important; position: absolute !important; z-index: -1000 !important; top: 0px !important; right: 0px !important; letter-spacing: normal; line-height: 22.5px; font-family: -apple-system, BlinkMacSystemFont, open_sanslight, &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; font-weight: 400; font-size: 15px; font-style: normal; tab-size: 8; text-rendering: auto; text-transform: none; width: 326.594px; text-indent: 0px; padding: 10px; border-width: 0px; box-sizing: border-box;"></textarea><div class="atlaskit-portal-container" style="display: flex;"><div class="atlaskit-portal" style="z-index: 800;"><div class="styled__Tooltip-fadon5-1 irXsJ styled__TooltipPrimitive-fadon5-0 drTAhx" style="transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1) 0s, opacity 120ms linear 0s; opacity: 1; position: fixed; will-change: transform; top: 0px; left: 0px; transform: translate3d(5px, 724px, 0px);">Share your screen</div></div></div></body></html>

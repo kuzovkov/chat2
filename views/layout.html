@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat1</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/vendor/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="/vendor/jquery-ui/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="/vendor/jquery-ui/jquery-ui.structure.min.css">
+    <script src="/vendor/jquery/jquery-1.12.4.js"></script>
+    <script src="/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/ui.js"></script>
+    {% block js %}{% endblock %}
+</head>
+<body>
+{% block content %}
+{% endblock %}
+<!--dialog confirm-->
+<div id="dialog-confirm" title="Video chat">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span> </p>
+</div>
+<!--end dialog confirm-->
+<!--dialog message-->
+<div id="dialog-message" title="Message">
+    <p></p>
+</div>
+<!--end dialog message-->
+</body>
+</html>

@@ -6,8 +6,12 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
+      - ./modules:/usr/src/app/modules
       - ./public:/usr/src/app/public
+      - ./users_files:/usr/src/app/users_files
+      - ./views:/usr/src/app/views
       - ./ice.json:/usr/src/app/ice.json:ro
+      - ./test.js:/usr/src/app/test.js
       - ./server_http.js:/usr/src/app/server_http.js
       - ./server_https.js:/usr/src/app/server_https.js
     dns: 8.8.8.8
@@ -15,6 +19,12 @@ services:
       - "8000:8000"
     environment:
       NODE_ENV: production
+    restart: unless-stopped
+
+  redis:
+    image: redis:4.0-alpine
+    expose:
+      - 6379
     restart: unless-stopped
 
   nginx:

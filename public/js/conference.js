@@ -77,7 +77,7 @@ window.onload = function(){
         var socket = io.connect(window.location.host + '/');
         socket.on('ice', function (data) {
             if (data.ice){
-                connection.iceServers = JSON.parse(window.atob(data.ice));
+                connection.iceServers = JSON.parse(window.atob(data.ice)).iceServers;
             }
         });
         socket.emit('get_ice', {});

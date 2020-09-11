@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+        <div class="input-nicname ui-widget-content">
+
+            <form method="post" action="/choosenicname">
+                <div class="error">{% if message %}{{message}}{% endif %}</div>
+                <label>Choose You NicName: </label>
+                <div>
+                    <input type="text" name="nicname"/>
+                    <button>Choose</button>
+                </div>
+            </form>
+            <div class="header ui-widget-header">
+                <h1>Free chat without registration</h1>
+            </div>
+        </div>
+
+<script>
+    if (!navigator.cookieEnabled) {
+        alert( 'Включите cookie для комфортной работы с этим сайтом' );
+    }
+</script>
+{% endblock %}
