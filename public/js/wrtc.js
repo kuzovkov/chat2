@@ -1,9 +1,7 @@
 var PeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
 var IceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
 var SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
-navigator.getUserMedia = navigator.getUserMedia || navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia;
-
-
+navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 var WRTC = {};
 WRTC.pc_config = null;
 
@@ -52,7 +50,18 @@ WRTC.getUserMedia = function(callback){
     navigator.getUserMedia(
         WRTC.mediaOptions,
         callback,
+<<<<<<< HEAD
         function(error) { console.log(error) }
+=======
+        function(error) { WRTC.getUserMedia = function(callback){
+            console.log(Date.now(), 'getUserMedia');
+            navigator.getUserMedia(
+                { audio: true, video: false },
+                callback,
+                function(error) { console.log(error) }
+            );
+        }; }
+>>>>>>> remotes/gitlab/conference
     );
 };
 

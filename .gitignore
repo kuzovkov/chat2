@@ -1,4 +1,5 @@
 /users_files/*
 docker/certbot/conf/
 docker/certbot/conf/live/*
-.idea
+.id
+/node_modules/
