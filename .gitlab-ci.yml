@@ -1,0 +1,21 @@
+#include:
+#  - remote: 'https://gitlab.com/gitlab-org/auto-devops-v12-10/-/raw/master/Auto-DevOps-remote.gitlab-ci.yml'
+
+image: "ubuntu:bionic"
+
+before_script:
+    - apt-get update
+    - apt-get install zip unzip
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+dev_deploy:
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'dev'
+  #only:
+  #  - dev
+  script:
+    - echo "${SSH_PRIVATE_KEY}" | tr -d ' ' | base64 --decode | ssh-add -
+    - ssh $SERVER_HOST 'hostname && whoami && cd /home/ubuntu/chat/.deploy/ && ./worker.sh deploy dev'
