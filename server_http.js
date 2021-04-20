@@ -49,8 +49,6 @@ server.listen(port,function(){
 });
 
 
-
-
 /* CORS */
 app.use(cors());
 
