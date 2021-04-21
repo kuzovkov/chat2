@@ -37,6 +37,9 @@ Check that actual domain name is in docker/nginx/conf.d/default.conf
 Check that actual domain name is in docker/coturn/turnserver.conf
 sudo docker-compose up -d
 
+#build js clients code for production mode
+sudo docker-compose exec chat gulp
+
 
 
 

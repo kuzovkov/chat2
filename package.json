@@ -1,5 +1,5 @@
 {
-  "name": "chat1",
+  "name": "chat2",
   "version": "1.0.0",
   "description": "node.js chat",
   "main": "server.js",
@@ -7,15 +7,23 @@
     "body-parser": "^1.15.2",
     "consolidate": "^0.14.5",
     "cookie-parser": "^1.4.3",
+    "cors": "^2.8.5",
     "express": "*",
     "express-fileupload": "0.0.5",
+    "pump": "^2.0.1",
+    "rtcmulticonnection-server": "*",
     "socket.io": "^1.7.1",
     "swig": "^1.4.2",
-    "urlencode": "^1.1.0",
-    "rtcmulticonnection-server": "*",
-    "cors": "^2.8.5"
+    "urlencode": "^1.1.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-if": "^3.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server_https.js"

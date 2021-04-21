@@ -4,6 +4,8 @@
 var fs = require('fs');
 var path = require('path');
 var urlencode = require('urlencode');
+var process = require('process');
+var NODE_ENV = process.env.NODE_ENV;
 
 
 /**
@@ -16,7 +18,7 @@ function index(req,res){
         res.end();
     }else{
         var userlist = global.chat.getUsersOnline();
-        res.render('index', {nicname:nicname, userlist: userlist});
+        res.render('index', {nicname:nicname, userlist: userlist, NODE_ENV: NODE_ENV});
     }
 
 }
