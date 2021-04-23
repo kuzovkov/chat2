@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+
+{% block js %}
+    {% include 'jsblock.html' %}
+{% endblock %}
+
+{% block content %}
+<body>
+
+<div class="container">
+    <div id="block-panel">
+        {% include 'panel.html' %}
+    </div>
+    <div id="block-users-list">
+        <h3><img class="icon" src="/img/users.svg"/> Users</h3>
+        <div>
+            {% include 'userlist.html' %}
+        </div>
+    </div>
+
+    <div id="block-files">
+        <h3><img class="icon" src="/img/cloud-upload.svg"/> Send files</h3>
+        <div>
+            {% include 'files.html' %}
+        </div>
+    </div>
+
+    <div id="block-incoming-files">
+        <h3><img class="icon" src="/img/cloud-download.svg"/> Incoming files</h3>
+        <div>
+            <div class="incoming-files">
+                <ul id="incoming-files"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="block-text-chat">
+        {# include 'chat.html' #}
+        <div class="cls"></div>
+    </div>
+
+    <div id="block-video-chat">
+        {% include 'videochat.html' %}
+        <div class="cls"></div>
+    </div>
+
+    {% include 'note.html' %}
+</div>
+
+
+<!--
+<div>
+
+<ul>
+    <li><a href="#tabs-1"><img class="icon" src="/img/video-camera.svg"/></a></li>
+    <li><a href="#tabs-2"><img class="icon" src="/img/pencil2.svg"/></a></li>
+</ul>
+
+
+</div>-->
+</body>
+{% endblock %}

@@ -1,16 +1,31 @@
-<div class="chat">
-    <h3><span id="user-for-chat"></span></h3>
-    <div class="messages" id="messages"></div>
-    <div class="cls"></div>
-    <div class="input">
-        <p>
-            <!--<input type="text" id="input"/>-->
-            <textarea id="input"></textarea>
-        <div class="cls"></div>
-            <button title="Send" class="ui-button" id="send-btn"></button>
-            <div class="cls"></div>
-        </p>
+<!-- Message Area -->
+<div class="d-none d-sm-flex flex-column col-12 col-sm-7 col-md-8 p-0 h-100" id="message-area">
+    <div class="w-100 h-100 overlay"></div>
+
+    <!-- Navbar -->
+    <div class="row d-flex flex-row align-items-center p-2 m-0 w-100" id="navbar">
+        <div class="d-block d-sm-none">
+            <i class="fas fa-arrow-left p-2 mr-2 text-white" style="font-size: 1.5rem; cursor: pointer;" onclick="showChatList()"></i>
+        </div>
+        <a href="#"><img src="https://via.placeholder.com/400x400" alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px;" id="pic"></a>
+        <div class="d-flex flex-column">
+            <div class="text-white font-weight-bold" id="name"></div>
+            <div class="text-white small" id="details"></div>
+        </div>
+        <div class="d-flex flex-row align-items-center ml-auto">
+            <a href="#"><i class="fas fa-search mx-3 text-white d-none d-md-block"></i></a>
+            <a href="#"><i class="fas fa-paperclip mx-3 text-white d-none d-md-block"></i></a>
+            <a href="#"><i class="fas fa-ellipsis-v mr-2 mx-sm-3 text-white"></i></a>
+        </div>
     </div>
-    <div class="cls"></div>
+
+    <!-- Messages -->
+    <div class="d-flex flex-column" id="messages"></div>
+
+    <!-- Input -->
+    <div class="d-none justify-self-end align-items-center flex-row" id="input-area">
+        <a href="#"><i class="far fa-smile text-muted px-3" style="font-size:1.5rem;"></i></a>
+        <input type="text" name="message" id="input" placeholder="Type a message" class="flex-grow-1 border-0 px-3 py-2 my-3 rounded shadow-sm">
+        <i class="fas fa-paper-plane text-muted px-3" style="cursor:pointer;" onclick="sendMessage()"></i>
+    </div>
 </div>
-<img id="chat-preload" src="/img/preload.gif"/>

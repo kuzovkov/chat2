@@ -3,7 +3,7 @@ var diagMess;
 
 $(function() {
 
-    $("#accordion")
+    /*$("#accordion")
         .accordion({
             header: "> div > h3",
             heightStyle: "fill"
@@ -41,7 +41,7 @@ $(function() {
             autoOpen: false,
 
         });
-
+    */
 
 });
 

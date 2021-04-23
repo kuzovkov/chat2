@@ -59,13 +59,20 @@ button {text-align: center;}
     .icon{width: 20px; height: 20px;}
 }
 
+/*blocks*/
+#block-files {display: none;}
+#block-video-chat {display: none;}
+#block-incoming-files {display: none;}
+#block-text-chat {display: block; border: 1px solid red;}
+
+
 /*video*/
-#remoteVideo { width: 100%; height: calc(100% - 1.0em - 3px); margin: 0; background: #000;}
-.localVideo {width: 40%; height:auto; position: absolute; right: 1.1em; bottom: 1em; border: 1px solid grey; z-index: 99; padding: 0; background-color: #222;}
-#localVideo {width: 100%; height: calc(100% - 1.0em - 3px); background: #000; margin: 0;}
-.localVideo h3 {height: 1.0em; margin: 0; padding: 0;}
-.remoteVideo {width: 100%; height:auto; position: absolute; top: 10px; right: 1.1em; bottom: 1em; border: 1px solid grey; z-index: 98; padding: 0; background-color: #222;}
-.remoteVideo h3 {height: 1.0em; margin: 0; padding: 0;}
+.remoteVideo video { width: 100%; height: calc(100% - 1.0em - 3px); margin: 0; background: #999;}
+.localVideo {width: 40%; height:auto; position: absolute; right: 1.1em; bottom: 1em; border: 1px solid grey; z-index: 99; padding: 0; background-color: #999;}
+.localVideo video {width: 100%; height: calc(100% - 1.0em - 3px); background: #999; margin: 0;}
+.localVideo h3 {height: 1.0em; margin: 0; padding: 0; opacity: 0.2;}
+.remoteVideo {width: 100%; height:auto; position: absolute; top: 0px; right: 0; bottom: 1em; border: none; z-index: 98; padding: 0; background-color: #999;}
+.remoteVideo h3 {height: 1.0em; margin: 0; padding: 0; opacity: 0.2;}
 .call-buttons{position: absolute; display: inline-block; left: 50%; width: 100%; margin-left: -50%; bottom: 50px;z-index: 9999;}
 #callButton { display: inline-block; font-size: 1em; border-radius: 1em; }
 #hangupButton { display: none; font-size: 1em; border-radius: 1em; }
@@ -89,7 +96,7 @@ button {text-align: center;}
 .messages li{font-size: 0.8em}
 .chat h3{background-color: #4f4221; padding-bottom: 5px;}
 .messages li:nth-child(odd){background-color: #333333; }
-.chat {  width: 100%; height: 100%; margin: 10px auto 0 auto;  padding: 0; max-height: 100%; position: relative;}
+.chat {  width: 100%; height: 100%; margin: 0 auto 0 auto;  padding: 0; max-height: 100%; position: relative;}
 .chat p { padding-top: 0;padding-bottom: 0;  }
 .input { padding-right: 0; position: absolute; bottom: 0; max-height: 140px; max-width: 100%; min-width: 100%;/*border: 1px solid red;*/  }
 .input textarea {  width: 100%;  height: 50px; max-height: 100px; max-width: 100%; border: 1px solid grey;  border-radius: 5px;  padding: 0; background-color: #362917; color: #f8eec9; font-size:0.7em;}
