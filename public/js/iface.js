@@ -8,6 +8,63 @@ I.timeout = null;
 I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
 I.CHAT_ENABLE = false; /*доступна ли отправка сообщений*/
 I.call_sound = 'call.wav';
+var getById = (id, parent) => parent ? parent.getElementById(id) : getById(id, document);
+var getByClass = (className, parent) => parent ? parent.getElementsByClassName(className) : getByClass(className, document);
+var mClassList = (element) => {
+    return {
+        add: (className) => {
+            element.classList.add(className);
+            return mClassList(element);
+        },
+        remove: (className) => {
+            element.classList.remove(className);
+            return mClassList(element);
+        },
+        contains: (className, callback) => {
+            if (element.classList.contains(className))
+                callback(mClassList(element));
+        }
+    };
+};
+
+var mDate = (dateString) => {
+
+    let date = dateString ? new Date(dateString) : new Date();
+
+    let dualize = (x) => x < 10 ? "0" + x : x;
+    let getTime = () => dualize(date.getHours()) + ":" + dualize(date.getMinutes());
+    let getDate = () => dualize(date.getDate()) + "/" + dualize(date.getMonth()) + "/" + dualize(date.getFullYear());
+
+    return {
+        subtract: (otherDateString) => {
+            return date - new Date(otherDateString);
+        },
+        lastSeenFormat: () => {
+            let dateDiff = Math.round(new Date() - date) / (1000 * 60 * 60 * 24);
+            let value = (dateDiff === 0) ? "today" : (dateDiff === 1) ? "yesterday" : getDate();
+            return value + " at " + getTime();
+        },
+        chatListFormat: () => {
+            let dateDiff = Math.round((new Date() - date) / (1000 * 60 * 60 * 24));
+            if (dateDiff === 0) {
+                return getTime();
+            } else if (dateDiff === 1) {
+                return "Yesterday";
+            } else {
+                return getDate();
+            }
+        },
+        getDate: () => {
+            return getDate();
+        },
+        getTime: () => {
+            return getTime();
+        },
+        toString:() => {
+            return date.toString().substr(4, 20);
+        },
+    };
+};
 
 /**
  * Список элементов интерфейса
@@ -46,6 +103,29 @@ I.elements = {
     audio_on_button: 'audioOn'
 };
 
+I.DOM = {
+    chatListArea: getById("chat-list-area"),
+    messageArea: getById("message-area"),
+    inputArea: getById("input-area"),
+    chatList: getById("chat-list"),
+    messages: getById("messages"),
+    chatListItem: getByClass("chat-list-item"),
+    messageAreaName: getById("name", this.messageArea),
+    messageAreaPic: getById("pic", this.messageArea),
+    messageAreaNavbar: getById("navbar", this.messageArea),
+    messageAreaDetails: getById("details", this.messageAreaNavbar),
+    messageAreaOverlay: getByClass("overlay", this.messageArea)[0],
+    messageInput: getById("input"),
+    profileSettings: getById("profile-settings"),
+    profilePic: getById("profile-pic"),
+    profilePicInput: getById("profile-pic-input"),
+    inputName: getById("input-name"),
+    username: getById("username"),
+    displayPic: getById("display-pic")
+};
+
+I.DOM = null;
+
 /**
  * инициализация объекта интерфейса
  * @param app
@@ -53,12 +133,48 @@ I.elements = {
 I.init = function(app){
     I.app = app;
     I.initElements();
+    I.DOM = {
+        chatListArea: getById("chat-list-area"),
+        messageArea: getById("message-area"),
+        inputArea: getById("input-area"),
+        chatList: getById("chat-list"),
+        messages: getById("messages"),
+        chatListItem: getByClass("chat-list-item"),
+        messageAreaName: getById("name", this.messageArea),
+        messageAreaPic: getById("pic", this.messageArea),
+        messageAreaNavbar: getById("navbar", this.messageArea),
+        messageAreaDetails: getById("details", this.messageAreaNavbar),
+        messageAreaOverlay: getByClass("overlay", this.messageArea)[0],
+        messageInput: getById("input"),
+        profileSettings: getById("profile-settings"),
+        profilePic: getById("profile-pic"),
+        profilePicInput: getById("profile-pic-input"),
+        inputName: getById("input-name"),
+        username: getById("username"),
+        displayPic: getById("display-pic")
+    };
     I.setInterfaceHandlers();
     if (!I.app.files.FILE_API){
         I.files_wrap.innerHTML = ('<p>You browser does not supported File API</p>');
     }
-    I.showMessages();
+    // I.showMessages();
     if (window.localStorage) I.app.selected_user = window.localStorage.getItem('selected_user');
+
+    I.DOM.username.innerHTML = A.nicname;
+    I.DOM.displayPic.src = I.getUserProfile()['pic'];
+    I.DOM.profilePic.stc = I.getUserProfile()['pic'];
+    I.DOM.profilePic.addEventListener("click", () => I.DOM.profilePicInput.click());
+    I.DOM.profilePicInput.addEventListener("change", () => console.log(I.DOM.profilePicInput.files[0]));
+    I.DOM.inputName.addEventListener("blur", (e) => A.nicname = e.target.value);
+    I.generateChatList();
+
+    console.log("Click the Image at top-left to open settings.");
+};
+
+I.getUserProfile = function () {
+   return {
+       'pic': "/vendor/whatsapp/images/0923102932_aPRkoW.jpg"
+   };
 };
 
 /**
@@ -457,6 +573,228 @@ I.chat_enable = function(status){
         I.input.disabled = true;
     }
 };
+
+
+//from whatsapp
+// 'areaSwapped' is used to keep track of the swapping
+// of the main area between chatListArea and messageArea
+// in mobile-view
+I.areaSwapped = false;
+
+// 'chat' is used to store the current chat
+// which is being opened in the message area
+I.chat = null;
+
+// this will contain all the chats that is to be viewed
+// in the chatListArea
+I.chatList = [];
+
+// this will be used to store the date of the last message
+// in the message area
+I.lastDate = "";
+
+// 'populateChatList' will generate the chat list
+// based on the 'messages' in the datastore
+I.populateChatList = () => {
+    I.chatList = [];
+
+    // 'present' will keep track of the chats
+    // that are already included in chatList
+    // in short, 'present' is a Map DS
+    let present = {};
+
+    MessageUtils.getMessages()
+        .sort((a, b) => mDate(a.time).subtract(b.time))
+        .forEach((msg) => {
+            let chat = {};
+
+            chat.isGroup = msg.recvIsGroup;
+            chat.msg = msg;
+
+            if (msg.recvIsGroup) {
+                chat.group = groupList.find((group) => (group.id === msg.recvId));
+                chat.name = chat.group.name;
+            } else {
+                chat.contact = contactList.find((contact) => (msg.sender !== user.id) ? (contact.id === msg.sender) : (contact.id === msg.recvId));
+                chat.name = chat.contact.name;
+            }
+
+            chat.unread = (msg.sender !== user.id && msg.status < 2) ? 1: 0;
+
+            if (present[chat.name] !== undefined) {
+                I.chatList[present[chat.name]].msg = msg;
+                I.chatList[present[chat.name]].unread += chat.unread;
+            } else {
+                present[chat.name] = I.chatList.length;
+                I.chatList.push(chat);
+            }
+        });
+};
+
+I.viewChatList = () => {
+    I.DOM.chatList.innerHTML = "";
+    I.chatList
+        .sort((a, b) => mDate(b.msg.time).subtract(a.msg.time))
+        .forEach((elem, index) => {
+            let statusClass = elem.msg.status < 2 ? "far" : "fas";
+            let unreadClass = elem.unread ? "unread" : "";
+
+            I.DOM.chatList.innerHTML += `
+		<div class="chat-list-item d-flex flex-row w-100 p-2 border-bottom ${unreadClass}" onclick="I.generateMessageArea(this, ${index})">
+			<img src="${elem.isGroup ? elem.group.pic : elem.contact.pic}" alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px;">
+			<div class="w-50">
+				<div class="name">${elem.name}</div>
+				<div class="small last-message">${elem.isGroup ? contactList.find(contact => contact.id === elem.msg.sender).number + ": " : ""}${elem.msg.sender === user.id ? "<i class=\"" + statusClass + " fa-check-circle mr-1\"></i>" : ""} ${elem.msg.body}</div>
+			</div>
+			<div class="flex-grow-1 text-right">
+				<div class="small time">${mDate(elem.msg.time).chatListFormat()}</div>
+				${elem.unread ? "<div class=\"badge badge-success badge-pill small\" id=\"unread-count\">" + elem.unread + "</div>" : ""}
+			</div>
+		</div>
+		`;
+        });
+};
+
+I.generateChatList = () => {
+    I.populateChatList();
+    I.viewChatList();
+};
+
+I.addDateToMessageArea = (date) => {
+    I.DOM.messages.innerHTML += `
+	<div class="mx-auto my-2 bg-primary text-white small py-1 px-2 rounded">
+		${date}
+	</div>
+	`;
+};
+
+I.addMessageToMessageArea = (msg) => {
+    let msgDate = mDate(msg.time).getDate();
+    if (lastDate != msgDate) {
+        I.addDateToMessageArea(msgDate);
+        lastDate = msgDate;
+    }
+
+    let htmlForGroup = `
+	<div class="small font-weight-bold text-primary">
+		${contactList.find(contact => contact.id === msg.sender).number}
+	</div>
+	`;
+
+    let sendStatus = `<i class="${msg.status < 2 ? "far" : "fas"} fa-check-circle"></i>`;
+
+    I.DOM.messages.innerHTML += `
+	<div class="align-self-${msg.sender === user.id ? "end self" : "start"} p-1 my-1 mx-3 rounded bg-white shadow-sm message-item">
+		<div class="options">
+			<a href="#"><i class="fas fa-angle-down text-muted px-2"></i></a>
+		</div>
+		${I.chat.isGroup ? htmlForGroup : ""}
+		<div class="d-flex flex-row">
+			<div class="body m-1 mr-2">${msg.body}</div>
+			<div class="time ml-auto small text-right flex-shrink-0 align-self-end text-muted" style="width:75px;">
+				${mDate(msg.time).getTime()}
+				${(msg.sender === user.id) ? sendStatus : ""}
+			</div>
+		</div>
+	</div>
+	`;
+
+    I.DOM.messages.scrollTo(0, I.DOM.messages.scrollHeight);
+};
+
+I.generateMessageArea = (elem, chatIndex) => {
+    I.chat = I.chatList[chatIndex];
+
+    mClassList(I.DOM.inputArea).contains("d-none", (elem) => elem.remove("d-none").add("d-flex"));
+    mClassList(I.DOM.messageAreaOverlay).add("d-none");
+
+    [...I.DOM.chatListItem].forEach((elem) => mClassList(elem).remove("active"));
+
+    mClassList(elem).contains("unread", () => {
+        MessageUtils.changeStatusById({
+            isGroup: I.chat.isGroup,
+            id: I.chat.isGroup ? I.chat.group.id : I.chat.contact.id
+        });
+        mClassList(elem).remove("unread");
+        mClassList(elem.querySelector("#unread-count")).add("d-none");
+    });
+
+    if (window.innerWidth <= 575) {
+        mClassList(I.DOM.chatListArea).remove("d-flex").add("d-none");
+        mClassList(I.DOM.messageArea).remove("d-none").add("d-flex");
+        I.areaSwapped = true;
+    } else {
+        mClassList(elem).add("active");
+    }
+
+    I.DOM.messageAreaName.innerHTML = I.chat.name;
+    I.DOM.messageAreaPic.src = I.chat.isGroup ? I.chat.group.pic : I.chat.contact.pic;
+
+    // Message Area details ("last seen ..." for contacts / "..names.." for groups)
+    if (I.chat.isGroup) {
+        let groupMembers = groupList.find(group => group.id === I.chat.group.id).members;
+        let memberNames = contactList
+            .filter(contact => groupMembers.indexOf(contact.id) !== -1)
+            .map(contact => contact.id === user.id ? "You" : contact.name)
+            .join(", ");
+
+        I.DOM.messageAreaDetails.innerHTML = `${memberNames}`;
+    } else {
+        I.DOM.messageAreaDetails.innerHTML = `last seen ${mDate(I.chat.contact.lastSeen).lastSeenFormat()}`;
+    }
+
+    let msgs = I.chat.isGroup ? MessageUtils.getByGroupId(I.chat.group.id) : MessageUtils.getByContactId(I.chat.contact.id);
+
+    I.DOM.messages.innerHTML = "";
+
+    lastDate = "";
+    msgs
+        .sort((a, b) => mDate(a.time).subtract(b.time))
+        .forEach((msg) => I.addMessageToMessageArea(msg));
+};
+
+I.showChatList = () => {
+    if (I.areaSwapped) {
+        mClassList(I.DOM.chatListArea).remove("d-none").add("d-flex");
+        mClassList(I.DOM.messageArea).remove("d-flex").add("d-none");
+        I.areaSwapped = false;
+    }
+};
+
+I.sendMessage = () => {
+    let value = I.DOM.messageInput.value;
+    I.DOM.messageInput.value = "";
+    if (value === "") return;
+
+    let msg = {
+        sender: user.id,
+        body: value,
+        time: mDate().toString(),
+        status: 1,
+        recvId: I.chat.isGroup ? I.chat.group.id : I.chat.contact.id,
+        recvIsGroup: I.chat.isGroup
+    };
+
+    I.addMessageToMessageArea(msg);
+    MessageUtils.addMessage(msg);
+    I.generateChatList();
+};
+
+I.showProfileSettings = () => {
+    I.DOM.profileSettings.style.left = 0;
+    I.DOM.profilePic.src = user.pic;
+    I.DOM.inputName.value = user.name;
+};
+
+I.hideProfileSettings = () => {
+    I.DOM.profileSettings.style.left = "-110%";
+    I.DOM.username.innerHTML = user.name;
+};
+
+window.addEventListener("resize", e => {
+    if (window.innerWidth > 575) I.showChatList();
+});
+
 
 /**
  * generation UUID4 code
