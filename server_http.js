@@ -84,6 +84,7 @@ io.on('connection', function(socket){
     Handler.request_files(socket, chat);
     Handler.wrtc_message(socket, chat);
     Handler.get_ice(socket, chat);
+    Handler.me(socket, chat);
 });
 
 io.of('/rtcmulticonnection/').on('connection', function(socket) {

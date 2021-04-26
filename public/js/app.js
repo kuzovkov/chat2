@@ -1,5 +1,5 @@
 var A = {};
-A.nicname = null;
+A.nicname = nicname;
 A.selected_user = null;
 
 /**
@@ -39,6 +39,7 @@ A.setEventHandlers= function(){
     A.socket.setEventHandler('you_files', A.incomingFiles);
     A.socket.setEventHandler('wrtc_message', A.gotWRTCMessage);
     A.socket.setEventHandler('upload_error', A.uploadError);
+    A.socket.setEventHandler('you', A.userData);
 };
 
 /**
@@ -74,6 +75,17 @@ A.sendUserMessage = function(message){
         console.log('send message across server');
     }
 };
+
+/**
+ * запрос данных о текущем пользователе
+ */
+A.me = function(){
+    A.socket.send('me', {});
+};
+
+A.userData = function (data) {
+    A.iface.getUserProfile(data);
+}
 
 /**
  * обработка приема нового сообщения чата
@@ -206,7 +218,7 @@ A.requestFiles = function(){
  * @param data
  */
 A.incomingFiles = function(data){
-    A.iface.refreshFilesLinks(data);
+    //A.iface.refreshFilesLinks(data);
 };
 
 /**

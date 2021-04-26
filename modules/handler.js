@@ -10,12 +10,15 @@ function getIce(){
 function user_connect(socket, chat){
     socket.on('user_connect', function(data){
         var nicname = data.nicname;
-        chat.refreshSocket(nicname, socket);
-        var users_online = chat.getUsersOnline();
-        console.log(users_online);
-        socket.broadcast.emit('new_user', {'user':nicname});
-        socket.broadcast.emit('users_online', {users_online:users_online});
-        socket.emit('users_online', {users_online:users_online, ice: getIce()});
+        if (nicname){
+            console.log('user_connect:', 'data:', data);
+            chat.refreshSocket(nicname, socket);
+            var users_online = chat.getUsersOnline();
+            console.log(users_online);
+            socket.broadcast.emit('new_user', {'user':nicname});
+            socket.broadcast.emit('users_online', {users_online:users_online});
+            socket.emit('users_online', {users_online:users_online, ice: getIce()});
+        }
     });
 }
 
@@ -74,6 +77,13 @@ function get_ice(socket, chat) {
     });
 }
 
+function me(socket, chat) {
+    socket.on('me', function(data){
+        var nicname = chat.getNicname(socket.id)
+        socket.emit('you', {nicname: nicname, id: socket.id});
+    });
+}
+
 
 
 exports.user_connect = user_connect;
@@ -83,3 +93,4 @@ exports.message_history = message_history;
 exports.request_files = request_files;
 exports.wrtc_message = wrtc_message;
 exports.get_ice = get_ice;
+exports.me = me;

@@ -31,8 +31,10 @@ Chat.addUser = function(nicname){
  * @param socketId
  */
 Chat.refreshSocket = function(nicname, socket){
-    Chat.users[nicname] = {'socket': null};
-    Chat.users[nicname].socket = socket;
+    if (nicname){
+        Chat.users[nicname] = {'socket': null};
+        Chat.users[nicname].socket = socket;
+    }
 }
 
 /**
@@ -60,6 +62,18 @@ Chat.removeUser = function(socketId){
         }
     }
 }
+
+/**
+ * получение дданных текущего пользователя
+ * @param socketId
+ */
+Chat.getCurrentUser = function (socketId) {
+    for (nicname in Chat.users){
+        if (Chat.users[nicname].socket.id == socketId){
+            return Chat.users[nicname];
+        }
+    }
+};
 
 /**
  * получение массива ников подключенных к чату пользователей
@@ -256,3 +270,4 @@ exports.getFilesMetadataByNicname = Chat.getFilesMetadataByNicname;
 exports.getFileMetadataBySecret = Chat.getFileMetadataBySecret;
 exports.USERS_FILES_DIR = Chat.USERS_FILES_DIR;
 exports.delFileMetadataBySecret = Chat.delFileMetadataBySecret;
+exports.getCurrentUser = Chat.getCurrentUser;

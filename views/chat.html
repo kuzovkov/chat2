@@ -5,7 +5,7 @@
     <!-- Navbar -->
     <div class="row d-flex flex-row align-items-center p-2 m-0 w-100" id="navbar">
         <div class="d-block d-sm-none">
-            <i class="fas fa-arrow-left p-2 mr-2 text-white" style="font-size: 1.5rem; cursor: pointer;" onclick="showChatList()"></i>
+            <i class="fas fa-arrow-left p-2 mr-2 text-white" style="font-size: 1.5rem; cursor: pointer;"></i>
         </div>
         <a href="#"><img src="https://via.placeholder.com/400x400" alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px;" id="pic"></a>
         <div class="d-flex flex-column">
@@ -26,6 +26,6 @@
     <div class="d-none justify-self-end align-items-center flex-row" id="input-area">
         <a href="#"><i class="far fa-smile text-muted px-3" style="font-size:1.5rem;"></i></a>
         <input type="text" name="message" id="input" placeholder="Type a message" class="flex-grow-1 border-0 px-3 py-2 my-3 rounded shadow-sm">
-        <i class="fas fa-paper-plane text-muted px-3" style="cursor:pointer;" onclick="I.sendMessage()"></i>
+        <i class="fas fa-paper-plane text-muted px-3" style="cursor:pointer;" onclick="I.btnSendHandler()"></i>
     </div>
 </div>
