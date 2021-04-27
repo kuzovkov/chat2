@@ -1,8 +1,16 @@
 <div id="files-wrap" class="files">
-    <input class="ui-button" type="file" id="files-input" name="files[]" multiple />
-    <button title="Send" class="ui-button" id="send-files-btn"><img class="icon" src="/img/cloud-upload.svg"/></button>
-    <button title="Clear selected" class="ui-button" id="cancel-btn"><img class="icon" src="/img/cancel-circle.svg"/></button>
     <div id="files-list"></div>
+    <input class="ui-button" type="file" id="files-input" name="files[]" multiple style="display: none;"/>
+    <button class="btn btn-success" id="open-select-files">select</button>
+    <p><button title="send" class="btn btn-success" id="send-files-btn" style="display: none;"><img class="icon" src="/img/cloud-upload.svg"/></button>
+        <button title="clear selected" class="btn btn-warning" id="cancel-btn" style="display: none;"><img class="icon" src="/img/cancel-circle.svg"/></button>
+    </p>
 </div>
 
 <div class="cls"></div>
+
+<hr>
+<div class="align-self-end self p-1 my-1 mx-3 rounded bg-white shadow-sm message-item" id="incoming-files-div" style="display: none">
+    <h6>Incoming files</h6>
+    <ul id="incoming-files"></ul>
+</div>

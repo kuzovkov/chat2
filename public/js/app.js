@@ -218,7 +218,7 @@ A.requestFiles = function(){
  * @param data
  */
 A.incomingFiles = function(data){
-    //A.iface.refreshFilesLinks(data);
+    A.iface.refreshFilesLinks(data);
 };
 
 /**
