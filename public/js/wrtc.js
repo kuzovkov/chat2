@@ -345,6 +345,7 @@ WRTC.gotMessage = function(data){
             WRTC.hangup();
             WRTC.setSelectedUser(from);
             WRTC.sendMessage({type:'ready_call'});
+            I.showVideoPanel();
         }, function(){
             WRTC.sendMessage({type:'reject_call'}, from);
             WRTC.app.au.stopSound();

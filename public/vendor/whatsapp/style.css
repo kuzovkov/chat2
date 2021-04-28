@@ -128,6 +128,16 @@
 	-webkit-transition: all .2s ease-in-out;
 }
 
+#video-panel {
+	position: absolute;
+	top: 0;
+	left: 110%;
+	background: hsl(0, 0%, 95%);
+	transition: all 0.2s ease-in;
+	-moz-transition: all .2s ease-in-out;
+	-webkit-transition: all .2s ease-in-out;
+}
+
 #profile-pic {
 	cursor: pointer;
 	position: relative;
@@ -150,4 +160,26 @@
 	z-index: 99;
 }
 
-#files-wrap button { float: left; margin-left: 20px;}
+#files-wrap button { float: left; margin-left: 20px; margin-top: 10px;}
+#incoming-files span.file-name {font-size: smaller;}
+#incoming-files li {list-style-type: none;}
+
+.noscroll {overflow-y: hidden; overflow-x: hidden;}
+
+.red-boder {border: 1px solid red;}
+
+.call-buttons {position: absolute; bottom: 50px; width: 400px; min-width: 400px; text-align: center; left: 50%; margin-left: -200px;}
+.call-buttons button {width: 70px; height: 50px;}
+.call-buttons button img {width: 40px; height: 30px;}
+
+#video-wrap {text-align: center; position: relative;}
+.localVideo {position: absolute; right: 0; top: 0; max-width: 30%; height: auto;}
+video {position: relative;}
+video > span {z-index: 9999; background-color: rgba(0, 0, 0, 0.0); color: white; position: absolute; top: 10px; left: 10px;}
+div#user-for-videochat {float: right;}
+
+/*note*/
+.note {  width: 400px; height: 50px;border: 2px solid grey; font-size: 0.8em;  border-radius: 10px;  background-color: #060200;  opacity: 0.5;  position: absolute;  bottom: 20px;  right: 10px;  display: none;  z-index:9999;}
+#note-close {  cursor: pointer;  position: absolute;  top: 5px;  right: 5px;  font-size: 1.1em; color: #333; }
+#note-text { width:350px; height: 45px; position: absolute; top: 50%; left: 50%; margin-top: -23px; margin-left: -175px; color: #eee; }
+

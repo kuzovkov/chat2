@@ -7,7 +7,9 @@
 {% block content %}
 
 <div class="container-fluid" id="main-container">
+
     <div class="row h-100">
+
         <div class="col-12 col-sm-5 col-md-4 d-flex flex-column" id="chat-list-area" style="position:relative;">
 
             {% include 'panel.html' %}
@@ -20,11 +22,31 @@
 
             <!-- Files panel -->
             {% include 'files_panel.html' %}
+
+
         </div>
 
         <!-- Message Area -->
         {% include 'chat.html' %}
     </div>
+    <!-- Video panel -->
+    {% include 'video_panel.html' %}
+
 </div>
+
+
+<!--dialog confirm-->
+<div id="dialog-confirm" title="Video chat">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span> </p>
+</div>
+<!--end dialog confirm-->
+<!--dialog message-->
+<div id="dialog-message" title="Message">
+    <p></p>
+</div>
+<!--end dialog message-->
+
+<!-- Note block -->
+{% include 'note.html' %}
 
 {% endblock %}

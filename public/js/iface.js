@@ -65,7 +65,7 @@ var I = {};
 I.app = null;
 I.messages = [];
 I.MAX_MESSAGES_LEN = 1000;
-I.NOTE_TIME = 30000; /*время показа заметки*/
+I.NOTE_TIME = 10000; /*время показа заметки*/
 I.timeout = null;
 I.HISTORY_LEFTTIME = 48; /*длина истории сообщений в часах*/
 I.CHAT_ENABLE = false; /*доступна ли отправка сообщений*/
@@ -111,7 +111,8 @@ I.elements = {
     attach_file: 'attach-file',
     open_select_files: 'open-select-files',
     files_list_view: 'files-list',
-    incoming_files_div: 'incoming-files-div'
+    incoming_files_div: 'incoming-files-div',
+    video_open_btn: 'video-open'
 };
 
 I.DOM = null;
@@ -149,6 +150,7 @@ I.init = function(app){
         username: getById("username"),
         displayPic: getById("display-pic"),
         filesPanel: getById("files-panel"),
+        videoPanel: getById("video-panel"),
     };
     I.setInterfaceHandlers();
 };
@@ -179,7 +181,10 @@ I.testf = function(){
  * отправка выбранных файлов на сервер
  */
 I.sendFiles = function(){
-    if (!I.CHAT_ENABLE) return;
+    if (!A.selected_user){
+        I.showNote('User not selected yet!');
+        return;
+    }
     if (F.choosen_files.length == 0){
         I.showNote('No files was been choosed');
         return;
@@ -238,11 +243,18 @@ I.refreshFilesLinks = function(data){
     for (var i = 0; i < data.files.length; i++){
         var fname = data.files[i].origname;
         var secret = data.files[i].secret;
-        html.push('<li>');
-        html.push(['<img id="/file-del/', secret, '" title="Delete" class="icon-small delete-file" src="/img/cancel-circle.svg"/>'].join(''));
-        html.push('&nbsp;');
-        html.push(['<a href="/file/', secret, '" title="Download" target="_blank">', fname, '</a>'].join(''));
-        html.push('</li>');
+        html.push('<tr>');
+        html.push('<td>');
+        html.push(['<span class="file-name">', fname, '</span>'].join(''));
+        html.push('</td>');
+        html.push('<td>');
+        html.push(['<i id="/file-del/', secret, '" title="Delete" class="fa fa-trash mx-3 text-black d-none d-md-block delete-file"></i>'].join(''));
+        //html.push('&nbsp;');
+        html.push('</td>');
+        html.push('<td>');
+        html.push(['<a href="/file/', secret, '" title="Download" target="_blank">', '<i class="fa fa-download"></i>', '</a>'].join(''));
+        html.push('</td>');
+        html.push('</tr>');
     }
     if (html.length){
         I.showElem(I.incoming_files_div);
@@ -309,7 +321,7 @@ I.setInterfaceHandlers = function(){
         test: {event:'click', handler: I.testf},
         files_input: {event:'change', handler: F.handlerFileSelect},
         send_files_btn: {event:'click', handler: I.sendFiles},
-        call_button: {event: 'click', handler: I.app.wrtc.call},
+        call_button: {event: 'click', handler: I.startCall},
         hangup_button: {event: 'click', handler: I.app.wrtc.hangup},
         cancel_button: {event: 'click', handler: I.clearSelectedFiles},
         screenshare_button: {event: 'click', handler: I.app.wrtc.screenShare},
@@ -319,6 +331,7 @@ I.setInterfaceHandlers = function(){
         audio_on_button: {event: 'click', handler: I.app.wrtc.audioOn},
         attach_file: {event: 'click', handler: I.showFilesPanel},
         open_select_files: {event: 'click', handler: I.openFileSelect},
+        video_open_btn: {event: 'click', handler: I.showVideoPanel},
     };
     for (var el in handlers){
         if (I[el] != null && I[el] != undefined){
@@ -328,10 +341,24 @@ I.setInterfaceHandlers = function(){
     window.onkeypress = I.keyPressHandler;
 };
 
+/**
+ * открыть диалог выбора файлов
+ */
 I.openFileSelect = function () {
     I.files_input.click();
 };
 
+
+/**
+ * Начало видео звонка
+ */
+I.startCall = function () {
+    if (A.selected_user){
+        I.app.wrtc.call();
+    }else{
+        I.showNote('User not selected yet!');
+    }
+};
 
 
 /**
@@ -478,7 +505,13 @@ I.hideFilesPanel = function(){
     DOM.filesPanel.style.left = "-110%";
 };
 
+I.showVideoPanel = function(){
+    DOM.videoPanel.style.left = 0;
+};
 
+I.hideVideoPanel = function(){
+    DOM.videoPanel.style.left = "110%";
+};
 /**
  * выход из чата
  */

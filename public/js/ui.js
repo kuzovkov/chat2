@@ -22,9 +22,11 @@ $(function() {
 
         $( "#tabs" ).tabs();
 
-         $( "#video-wrap .localVideo" ).draggable({ containment: ".right", scroll: false }).resizable();
-        $( "#video-wrap .remoteVideo" ).draggable({ containment: ".right", scroll: false }).resizable();
+     $( "#video-wrap .remoteVideo" ).draggable({ containment: ".right", scroll: false }).resizable();
 
+
+     */
+    $( "#video-wrap .localVideo" ).draggable({ containment: ".right", scroll: false }).resizable();
 
     diagConfirm = $( "#dialog-confirm" ).dialog({
             resizable: false,
@@ -41,7 +43,7 @@ $(function() {
             autoOpen: false,
 
         });
-    */
+
 
 });
 
