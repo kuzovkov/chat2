@@ -179,7 +179,7 @@ video > span {z-index: 9999; background-color: rgba(0, 0, 0, 0.0); color: white;
 div#user-for-videochat {float: right;}
 
 /*note*/
-.note {  width: 400px; height: 50px;border: 2px solid grey; font-size: 0.8em;  border-radius: 10px;  background-color: #060200;  opacity: 0.5;  position: absolute;  bottom: 20px;  right: 10px;  display: none;  z-index:9999;}
-#note-close {  cursor: pointer;  position: absolute;  top: 5px;  right: 5px;  font-size: 1.1em; color: #333; }
+.note {  width: 400px; height: 200px; border: 2px solid grey; font-size: 1.5em;  border-radius: 10px;  background-color: #333;  opacity: 0.5;  position: absolute;  bottom: 50%;  left: 50%; margin-left: -200px; display: none;  z-index:9999;}
+#note-close {  cursor: pointer;  position: absolute;  top: 5px;  right: 5px;  font-size: 1.1em; color: #eee; }
 #note-text { width:350px; height: 45px; position: absolute; top: 50%; left: 50%; margin-top: -23px; margin-left: -175px; color: #eee; }
 

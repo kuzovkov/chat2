@@ -6,7 +6,7 @@ var mDate = (dateString) => {
 
     let dualize = (x) => x < 10 ? "0" + x : x;
     let getTime = () => dualize(date.getHours()) + ":" + dualize(date.getMinutes());
-    let getDate = () => dualize(date.getDate()) + "/" + dualize(date.getMonth()) + "/" + dualize(date.getFullYear());
+    let getDate = () => dualize(date.getDate()) + "/" + dualize(date.getMonth()+1) + "/" + dualize(date.getFullYear());
 
     return {
         subtract: (otherDateString) => {
@@ -114,8 +114,6 @@ I.elements = {
     incoming_files_div: 'incoming-files-div',
     video_open_btn: 'video-open'
 };
-
-I.DOM = null;
 
 /**
  * инициализация объекта интерфейса
@@ -273,9 +271,8 @@ I.refreshFilesLinks = function(data){
 I.appendIncomingFile = function(anchor){
     I.showElem(I.incoming_files_div);
     var ul = document.querySelector('#incoming-files');
-    var img = document.createElement('img');
-    img.src = "/img/cancel-circle.svg";
-    img.className = "icon-small delete-file";
+    var img = document.createElement('i');
+    img.className = "fa fa-trash mx-3 text-black d-none d-md-block delete-file";
     img.title = "Double click to delete";
     var li = document.createElement('li');
     li.id = UUID4();
@@ -286,7 +283,7 @@ I.appendIncomingFile = function(anchor){
 };
 
 /**
- * очистка выбранных файлов
+ * очистка файлов выбранных для отправки
  */
 I.clearSelectedFiles = function(){
     I.files_input.value = null;
@@ -348,7 +345,6 @@ I.openFileSelect = function () {
     I.files_input.click();
 };
 
-
 /**
  * Начало видео звонка
  */
@@ -359,7 +355,6 @@ I.startCall = function () {
         I.showNote('User not selected yet!');
     }
 };
-
 
 /**
  * добавление сообщения в список сообщений
@@ -401,6 +396,7 @@ I.keyPressHandler = function(e){
  * @param messages
  */
 I.refreshMessages = function(messages){
+    /*убираем сохранение в локальном хранилище
     var localMessages = JSON.parse(window.localStorage.getItem('messages')) || [];
     for (var i = 0; i < messages.length; i++){
         if (localMessages.find(function(element, index, array){ return !!(element.created == messages[i].created && element.from == messages[i].from && element.to == messages[i].to);}) === undefined)
@@ -410,6 +406,8 @@ I.refreshMessages = function(messages){
     I.messages = localMessages.filter(function(item){return !!item;});
     window.localStorage.setItem('messages', JSON.stringify(I.messages));
     console.log(messages);
+    */
+    I.messages = messages.filter(function(item){return !!item;});
     I.showMessages();
     I.check_chat();
 };
@@ -418,7 +416,10 @@ I.refreshMessages = function(messages){
  * запрос истории сообщений у сервера в соответствии с выбранныи пользователем
  */
 I.requestHistory = function(){
-    if (I.messages_block == null) return;
+    if (!I.messages_block)
+        return;
+    if (!A.selected_user)
+        return;
     I.showElem(I.chat_preload);
     I.app.requestMessagesHistory();
 };
@@ -453,14 +454,12 @@ I.addMessageToMessageArea = function(msg){
         I.addDateToMessageArea(msgDate);
         lastDate = msgDate;
     }
-
     let htmlForGroup = `
 	<div class="small font-weight-bold text-primary">
 		${msg.from}
 	</div>
 	`;
     let sendStatus = `<i class="fas fa-check-circle"></i>`;
-
     DOM.messages.innerHTML += `
 	<div class="align-self-${msg.from === I.user.name ? "end self" : "start"} p-1 my-1 mx-3 rounded bg-white shadow-sm message-item">
 		<div class="options">
@@ -512,6 +511,31 @@ I.showVideoPanel = function(){
 I.hideVideoPanel = function(){
     DOM.videoPanel.style.left = "110%";
 };
+
+I.showChatArea = function(){
+    mClassList(DOM.inputArea).contains("d-none", (elem) => elem.remove("d-none").add("d-flex"));
+    mClassList(DOM.messageAreaOverlay).add("d-none");
+
+    if (window.innerWidth <= 575) {
+        mClassList(DOM.chatListArea).remove("d-flex").add("d-none");
+        mClassList(DOM.messageArea).remove("d-none").add("d-flex");
+        areaSwapped = true;
+    }
+    DOM.messageAreaName.innerHTML = I.app.selected_user;
+    DOM.messageAreaPic.src = '/vendor/whatsapp/images/0923102932_aPRkoW.jpg';
+};
+
+I.hideChatArea = function(){
+    mClassList(DOM.inputArea).contains("d-none", (elem) => elem.remove("d-flex").add("d-none"));
+    mClassList(DOM.messageAreaOverlay).remove("d-none");
+
+    if (window.innerWidth <= 575) {
+        mClassList(DOM.chatListArea).remove("d-none").add("d-flex");
+        mClassList(DOM.messageArea).remove("d-flex").add("d-none");
+        areaSwapped = false;
+    }
+};
+
 /**
  * выход из чата
  */
@@ -538,6 +562,7 @@ I.refreshUsersOnline = function(user_list){
     I.destroyChildren(I.list_users_online);
     if (user_list.indexOf(I.app.selected_user) == -1){
         I.app.setSelectedUser(null);
+        I.hideChatArea();
     }
     //console.log(user_list);
     for (var i = 0; i< user_list.length; i++){
@@ -565,10 +590,12 @@ I.refreshUsersOnline = function(user_list){
 };
 
 I.check_chat = function(){
-    if (I.app.selected_user != null){
+    if (A.selected_user != null){
         I.chat_enable(true);
+        I.showChatArea();
     }else{
         I.chat_enable(false);
+        I.hideChatArea();
     }
 };
 
@@ -594,8 +621,10 @@ I.selectUser = function(user){
         if (list[i].id.split('-').pop() == user) list[i].className = list[i].className + ' selected';
     }
     I.app.setSelectedUser(user);
-    //if (I.user_for_chat != null) I.user_for_chat.innerHTML = I.app.selected_user;
-    if (I.user_for_videochat != null) I.user_for_videochat.innerHTML = I.app.wrtc.selected_user;
+    if (I.user_for_chat != null)
+        I.user_for_chat.innerHTML = I.app.selected_user;
+    if (I.user_for_videochat != null)
+        I.user_for_videochat.innerHTML = I.app.wrtc.selected_user;
     I.requestHistory();
 };
 
@@ -604,7 +633,6 @@ I.selectUser = function(user){
  * @param e
  */
 I.clickOnUser = function(e){
-    console.log(e);
     var user = this.id.split('-').pop();
     I.selectUser(user);
 };
