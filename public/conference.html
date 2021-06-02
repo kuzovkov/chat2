@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Video Conferencing using RTCMultiConnection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/css/conference.css">
+    <link rel="stylesheet" href="/vendor/muaz-khan/getMediaElement.css">
+    <link rel="stylesheet" href="/vendor/emojionearea/emojionearea.min.css">
+    <link rel="stylesheet" href="/vendor/jquery-ui/jquery-ui.min.css">
+    <script type="text/javascript" src="/vendor/muaz-khan/getMediaElement.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/vendor/muaz-khan/DetectRTC.js"></script>
+    <script type="text/javascript" src="/vendor/jquery/jquery-1.12.4.js"></script>
+    <script src="/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/vendor/emojionearea/emojionearea.min.js"></script>
+    <script type="text/javascript" src="/vendor/muaz-khan/FileBufferReader.js"></script>
+    <!--add this script before loading "RTCMultiConnection.min.js"-->
+    <script type="text/javascript"> window.getExternalIceServers = true;</script>
+    <script type="text/javascript" src="/vendor/muaz-khan/RTCMultiConnection.min.js"></script>
+    <script type="text/javascript" src="/vendor/muaz-khan/RecordRTC.js"></script>
+    <script src="/vendor/canvas-designer/dev/webrtc-handler.js"></script>
+    <script src="/vendor/canvas-designer/canvas-designer-widget.js"></script>
+</head>
+<body>
+
+    <div id="header">
+        <input id="room-id-txt" type="text" placeholder="Room ID" value="room1">
+        <input id="user-name" type="text" placeholder="You name">
+        <button id="btn-open-or-join">Open or Join</button>
+        <button id="btn-leave" style="display: none">Leave</button>
+
+    </div>
+    <div id="infobar">
+        <div id="onUserStatusChanged"></div>
+    </div>
+
+    <div id="videos"></div>
+    <div id="chat">
+        <div id="key-press" style="text-align: right; display: none; font-size: 11px;">
+            <span style="vertical-align: middle;"></span>
+            <img src="/img/key-press.gif" style="height: 12px; vertical-align: middle;">
+        </div>
+        <ul id="messages-list" style="width: 90%; height: 80%; overflow-y: scroll; border: 1px solid grey;"></ul>
+        <input id="input-message">
+        <button id="btn-send-message">Send</button>
+        <!--<button id="btn-select-file" style="display: none">Attach file</button>
+        <button id="btn-share-screen" style="display: none">Share screen</button>-->
+        <img id="btn-select-file" src="/img/attach-file.png" title="Attach a File">
+        <img id="btn-share-screen" src="/img/share-screen.png" title="Share Your Screen">
+    </div>
+    <div id="dialog-message" title="Message"><p>&nbsp;</p></div>
+    <script src="/js/conference.js"></script>
+</body>
+</html>
