@@ -73,6 +73,7 @@ I.call_sound = 'call.wav';
 I.user = {}; //текущий пользователь
 I.files_list = [];
 I.files_list_id = '';
+I.emojioneArea = null;
 
 /**
  * Список элементов интерфейса
@@ -373,6 +374,7 @@ I.addMessage = function(message){
  * обработка нажатия кнопки Send
  */
 I.btnSendHandler = function(){
+    console.log('value: ',DOM.messageInput.value);
     if (!I.CHAT_ENABLE) return;
     let value = DOM.messageInput.value;
     DOM.messageInput.value = "";
@@ -523,6 +525,25 @@ I.showChatArea = function(){
     }
     DOM.messageAreaName.innerHTML = I.app.selected_user;
     DOM.messageAreaPic.src = '/vendor/whatsapp/images/0923102932_aPRkoW.jpg';
+    $("#input").emojioneArea({
+        autoHideFilters: true,
+        inline: true,
+        events: {
+            keypress:  function(editor, e){
+                //console.log('event:keypress');
+            },
+            keydown: function (editor, event) {
+                //console.log('event:keydown');
+            },
+            keyup: function (editor, event) {
+                if (event.keyCode === 13){
+                    console.log('event:keyup', event.keyCode);
+                    console.log(editor);
+
+                }
+            }
+        }
+    });
 };
 
 I.hideChatArea = function(){
