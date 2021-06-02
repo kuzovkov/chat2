@@ -6,14 +6,16 @@
 
             <form method="post" action="/choosenicname">
                 <div class="error">{% if message %}{{message}}{% endif %}</div>
-                <label>Choose You NicName: </label>
+                <label>Input your nick: </label>
                 <div>
                     <input type="text" name="nicname"/>
-                    <button>Choose</button>
+                    <button>Save</button>
                 </div>
             </form>
             <div class="header ui-widget-header">
-                <h1>Free chat without registration</h1>
+                <img src="/img/chat-logo2.png" class="logo">
+                <h1>Free p2p video chat without registration with channel encryption</h1>
+                {% include 'banner.html' %}
             </div>
         </div>
 

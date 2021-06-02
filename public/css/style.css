@@ -145,3 +145,17 @@ img#chat-preload {width: 64px;  height: 64px;  position: absolute;  top: 50%;  l
 #tabs {position: relative;}
 #tabs-2 {top: 40px; position: absolute; bottom: 50px; left: 10px; width: 90%;}
 #tabs-1 {top: 40px; position: absolute; bottom: 50px; left: 10px; width: 90%;}
+
+/*logo*/
+img.logo {width: 200px; height: 60px; display: inline-block; float: left; margin-left: 20px; margin-top: 10px;}
+img.logo2 {width: 120px; height: 40px; display: inline-block; float: left; margin-left: 10px; margin-top: 20px;}
+
+.chat-logo {z-index: 99999; visibility: visible; display: block;position: absolute; top: 0px; right: 30%;}
+
+/*banner*/
+.banner {display: inline-block; float: right;}
+.banner img {width: 25px; width: 100px; margin-right: 30px; margin-top: 30px;}
+.banner p {font-size: small;}
+
+.right > .banner { z-index: 99999; visibility: visible; display: block; position: absolute; top: -10px; right: 10px;}
+.right > .banner > p {color: #f9f2bd;}
