@@ -2,3 +2,4 @@
 docker/certbot/conf/
 .idea
 /node_modules/
+docker/certbot/conf/live/
