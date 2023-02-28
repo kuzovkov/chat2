@@ -40,6 +40,20 @@ sudo docker-compose up -d
 #build js clients code for production mode
 sudo docker-compose exec chat gulp
 
+Run in different mode (development | production)
+
+prod:
+-----
+export NODE_ENV=production
+docker-compose up -d
+
+dev:
+----
+export NODE_ENV=development
+docker-compose up -d
+
+
+
 
 
 
