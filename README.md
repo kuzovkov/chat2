@@ -56,10 +56,22 @@ Check that actual domain name is in `docker/coturn/turnserver.conf`
 ```bash
 sudo docker-compose up -d
 ```
-#####build js clients code for production mode
+##### build js clients code for production mode
 
 ```bash
 sudo docker-compose exec chat gulp 
 ```
 
+##### Run in different mode (development | production)
 
+###### prod:
+```bash
+export NODE_ENV=production
+docker-compose up -d
+```
+
+###### dev:
+```bash
+export NODE_ENV=development
+docker-compose up -d
+```

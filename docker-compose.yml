@@ -1,5 +1,9 @@
 version: '3.7'
 
+x-anchors:
+  environment: &env
+    NODE_ENV: ${NODE_ENV:-development}
+
 services:
   chat:
     build:
@@ -18,9 +22,7 @@ services:
     dns: 8.8.8.8
     ports:
       - "8000:8000"
-    environment:
-      NODE_ENV: production
-      #NODE_ENV: development
+    environment: *env
     restart: unless-stopped
 
   redis:
