@@ -3,3 +3,4 @@ docker/certbot/conf/
 .idea
 docker/certbot/conf/live/*
 /node_modules/
+public/build/main.min.js
