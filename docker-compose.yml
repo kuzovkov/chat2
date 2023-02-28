@@ -53,16 +53,15 @@ services:
     restart: unless-stopped
 
   coturn:
-    image: instrumentisto/coturn
+    build:
+      context: ./docker/coturn
+      dockerfile: Dockerfile
     ports:
       - "3478:3478"
       - "3479:3479"
       - "5349:5349"
       - "5350:5350"
-    #network_mode: "host"
     volumes:
-      - ./docker/coturn/turnserver.conf:/etc/coturn/turnserver.conf
-      - ./docker/coturn/db:/var/db/turndb:ro
+      - ./docker/coturn/turnserver-alt.conf:/etc/turnserver.conf
       - ./docker/certbot/conf:/etc/letsencrypt
-      - ./docker/coturn/coturn:/etc/default/coturn
 

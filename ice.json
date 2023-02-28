@@ -3,6 +3,6 @@
         [
             {"urls": "stun:stun.l.google.com:19302"},
 	    {"urls": "stun:stun.phoneserve.com"},
-            {"urls":"turn:coturn:3478", "credential":"P@ssw0rd", "username": "sania"}
+            {"urls":"turn:chat2.kuzovkov12.ru:3478", "credential":"P@ssw0rd", "username": "sania"}
         ]
 }
