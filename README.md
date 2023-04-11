@@ -1,7 +1,7 @@
-#node.js chat
+# node.js chat
 
 
-##I. Setup. (Example)
+## I. Setup. (Example)
 Requires: Ubuntu (tested on 14.04), Node.js
 
 ```bash
@@ -20,7 +20,7 @@ sudo echo 'user.info       /var/log/chat.log' > /etc/rsyslog.d/chat.conf
 sudo service rsyslog restart
 ```
 
-##II. Running
+## II. Running
 ```bash
 sudo service chat1 start
 ```
@@ -30,7 +30,7 @@ Reading log:
 tail -f /var/log/chat
 ```
 
-##III. Stopping, Restarting
+## III. Stopping, Restarting
 
 ```bash
 sudo service chat1 stop
